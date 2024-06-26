@@ -1,0 +1,668 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Clients;
+use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Employees;
+use App\Models\Student;
+use App\Models\Financial;
+use App\Models\UserType;
+use App\Models\Department;
+use App\Models\Designation;
+use App\Models\EmployeeLog;
+use App\Models\ActivityLog;
+use App\Models\CountryList;
+use App\Exports\UsersExport;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Excel;
+
+class userController extends Controller
+{
+
+   //  ########### Employee Section Star here ###########   
+   public function setProfileEmployee()
+   {
+      $userTypes = UserType::whereNot('id', 1)->get();
+      $departments = Department::all();
+      $designations = Designation::all();
+
+      return view('pages.employees.setProfile', ['userTypes' => $userTypes, 'departments' => $departments, 'designations' => $designations]);
+   }
+   public function setProfileDataEmployee(Request $request)
+   {
+
+      // return $request->all();
+      // dd($request->all());
+      // Save the user's photo
+      $photo = $request->file('photo');
+      $photo_name = $photo->getClientOriginalName();
+      $photo_storage = $photo->storeAs("public/uploads", $photo_name);
+      $photo_path = 'storage/uploads/' . $photo_name;
+      // update employee data
+      Employees::where('userId', $request->profileId)->update([
+         'fathersName' => $request->fathersName,
+         'gender' => $request->gender,
+         'dob' => $request->dob,
+         'phone2' => $request->phone2,
+         'referenceName' => $request->referenceName,
+         'referencePhone' => $request->referencePhone,
+         'govId' => $request->govId,
+         'govIdNo' => $request->govIdNo,
+
+         'address1' => $request->address1,
+         'townCity1' => $request->townCity1,
+         'postZipCode1' => $request->postZipCode1,
+         'state1' => $request->state1,
+         'country1' => $request->country1,
+
+         'address2' => $request->address2,
+         'townCity2' => $request->townCity2,
+         'postZipCode2' => $request->postZipCode2,
+         'state2' => $request->state2,
+         'country2' => $request->country2,
+
+         'department' => $request->department,
+         'designation' => $request->designation,
+         'joinDate' => $request->joinDate,
+         'leaveDate' => $request->leaveDate,
+         'status' => $request->status,
+         'shift' => $request->shift,
+         'hiringManager' => $request->hiringManager,
+         'photo' => $photo_path,
+      ]);
+
+      Financial::where('userId', $request->profileId)->update([
+         'salaryType' => $request->salaryType,
+         'payScale' => $request->payScale,
+         'bankName' => $request->bankName,
+         'accHolderName' => $request->accHolderName,
+         'accNumber' => $request->accNumber,
+         'bankSortCode' => $request->bankSortCode,
+         'bankRoutingCode' => $request->bankRoutingCode,
+         'swiftCode' => $request->swiftCode,
+         'address1' => $request->address1,
+         'address2' => $request->address2,
+         'townCity' => $request->townCity,
+         'stateProvision' => $request->stateProvision,
+         'country' => $request->country,
+      ]);
+
+      // Flash a success message and redirect back
+      session()->flash('success', 'Profile data updated successfully..!!');
+      return redirect()->route('dashboard.employee');
+   }
+   public function employeeList()
+   {
+      $users = User::where('userType', 3)->get();
+      return view('superAdmin.employees.index', ['users' => $users]);
+   }
+   //add employee form
+   public function createEmployee()
+   {
+      $userTypes = UserType::where('id', 3)->paginate(10);
+      return view('superAdmin.employees.create', ['userTypes' => $userTypes]);
+   }
+   //store employee data
+   public function storeEmployee(Request $request)
+   {
+      //return $request->all();
+      // Generate a random password
+      //$autoPassword = Str::random(8);
+      $autoPassword = 12345678;
+
+      // Save the user's photo
+      $photo = $request->file('photo');
+      $photo_name = $photo->getClientOriginalName();
+      $photo_storage = $photo->storeAs("public/uploads", $photo_name);
+      $photo_path = 'storage/uploads/' . $photo_name;
+
+      // store  user data
+      $user = User::create([
+         'userType' => $request->userType,
+         'email' => $request->email,
+         'password' => Hash::make($autoPassword),
+      ]);
+
+      // store employee data
+      $employee = Employees::create([
+         'userId' => $user->id,
+         'firstName' => $request->firstName,
+         'lastName' => $request->lastName,
+         'nickName' => $request->nickName,
+         'fathersName' => $request->fathersName,
+         'gender' => $request->gender,
+         'dob' => $request->dob,
+         'phone1' => $request->phone1,
+         'phone2' => $request->phone2,
+         'referenceName' => $request->referenceName,
+         'referencePhone' => $request->referencePhone,
+         'govId' => $request->govId,
+         'govIdNo' => $request->govIdNo,
+         'whatsappNo' => $request->whatsappNo,
+
+         'address1' => $request->address1,
+         'townCity1' => $request->townCity1,
+         'postZipCode1' => $request->postZipCode1,
+         'state1' => $request->state1,
+         'country1' => $request->country1,
+
+         'address2' => $request->address2,
+         'townCity2' => $request->townCity2,
+         'postZipCode2' => $request->postZipCode2,
+         'state2' => $request->state2,
+         'country2' => $request->country2,
+
+         'department' => $request->department,
+         'designation' => $request->designation,
+         'joinDate' => $request->joinDate,
+         'leaveDate' => $request->leaveDate,
+         'status' => $request->status,
+         'shift' => $request->shift,
+         'hiringManager' => $request->hiringManager,
+         'photo' => $photo_path,
+         'salaryType' => $request->salaryType,
+         'payScale' => $request->payScale,
+      ]);
+
+
+      // store financial data
+      $financial = Financial::create([
+         'userId' => $user->id,
+         'salaryType' => $request->salaryType,
+         'payScale' => $request->payScale,
+         'bankName' => $request->bankName,
+         'accHolderName' => $request->accHolderName,
+         'accNumber' => $request->accNumber,
+         'bankSortCode' => $request->bankSortCode,
+         'bankRoutingCode' => $request->bankRoutingCode,
+         'swiftCode' => $request->swiftCode,
+         'address1' => $request->address1,
+         'address2' => $request->address2,
+         'townCity' => $request->townCity,
+         'stateProvision' => $request->stateProvision,
+         'country' => $request->country,
+      ]);
+
+      // save log data
+      $authEmployee = Auth::user()->employees;
+      $logData = ActivityLog::create([
+         'userId' => Auth::user()->id,
+         'activity' => $authEmployee->firstName . ' ' . $authEmployee->lastName . ' has created Employee id : ' . $user->id,
+      ]);
+
+      // Send the login details to the user's email
+      Mail::send('notification.employeeInvitation', ['user' => $user, 'password' => $autoPassword], function ($message) use ($user) {
+         $message->to($user->email)->subject('Your account has been created successfully');
+      });
+
+      // Flash a success message and redirect back
+      session()->flash('success', 'Employee created successfully..!!');
+      return redirect()->back();
+
+   }
+   //view employees profile
+   public function viewEmployee($id)
+   {
+      $employee = User::find($id);
+      return view('superAdmin.employees.view', ['employee' => $employee]);
+   }
+   //edit employees profile
+   public function editEmployee($id)
+   {
+      $employee = User::find($id);
+      $departments = Department::all();
+      $designations = Designation::all();
+      return view('superAdmin.employees.edit', ['employee' => $employee, 'departments' => $departments, 'designations' => $designations]);
+   }
+   //delete employees profile
+   public function deleteEmployee($id)
+   {
+      User::destroy($id);
+      Employees::destroy($id);
+      Financial::destroy($id);
+      session()->flash('delete', 'Account Deleted ..!!');
+      return redirect()->back();
+   }
+   //employees photoUpdate
+   public function photoUpdateEmployee(Request $request)
+   {
+      $url = "storage/";
+      $photo = $request->file('photo');
+      $photo_name = $photo->getClientOriginalName();
+      $photo_storage = $photo->storeAs("public/uploads", $photo_name);
+      $photo_path = 'storage/uploads/' . $photo_name;
+
+      Employees::where('userId', $request->userId)->update([
+         'photo' => $photo_path,
+      ]);
+      session()->flash('success', 'Photo updated successfully..!!');
+      return redirect()->back();
+   }
+   //employees infoUpdate
+   public function infoUpdateEmployee(Request $request)
+   {
+      Employees::where('userId', $request->id)->update([
+         'firstName' => $request->firstName,
+         'lastName' => $request->lastName,
+         'fathersName' => $request->fathersName,
+         'gender' => $request->gender,
+         'dob' => $request->dob,
+         'phone' => $request->phone,
+         'presentAddress' => $request->presentAddress,
+         'permanentAddress' => $request->permanentAddress,
+         'referenceName' => $request->referenceName,
+         'referencePhone' => $request->referencePhone,
+         'govId' => $request->govId,
+         'govIdNo' => $request->govIdNo,
+      ]);
+      session()->flash('success', 'Employee Info updated successfully..!!');
+      return redirect()->back();
+   }
+   //employees companyInfoUpdate
+   public function companyInfoUpdateEmployee(Request $request)
+   {
+      Employees::where('userId', $request->id)->update([
+         'department' => $request->department,
+         'designation' => $request->designation,
+         'joinDate' => $request->joinDate,
+         'leaveDate' => $request->leaveDate,
+         'status' => $request->status,
+         'shift' => $request->shift,
+         'hiringManager' => $request->hiringManager,
+      ]);
+      session()->flash('success', 'Company Info updated successfully..!!');
+      return redirect()->back();
+   }
+   //employees financialInfoUpdate
+   public function financialInfoUpdateEmployee(Request $request)
+   {
+      Financial::where('userId', $request->id)->update([
+         'salaryType' => $request->salaryType,
+         'payScale' => $request->payScale,
+         'accHolderName' => $request->accHolderName,
+         'accNumber' => $request->accNumber,
+         'bankName' => $request->bankName,
+         'branch' => $request->branch,
+         'branchCode' => $request->branchCode,
+      ]);
+      session()->flash('success', 'Financial Info updated successfully..!!');
+      return redirect()->back();
+   }
+   public function exportUser()
+   {
+      return Excel::download(new UsersExport, 'users.xls');
+   }
+
+   //  ########### Student Section Star here ###########   
+   //add Student form
+   public function createStudent()
+   {
+      $userTypes = UserType::where('id', 4)->first();
+      $countries = CountryList::all();
+      $employees = Employees::whereNot('id', 1)->get();
+      return view('superAdmin.students.create', ['userTypes' => $userTypes, 'countries' => $countries, 'employees' => $employees]);
+   }
+   //store Student data
+   public function storeStudent(Request $request)
+   {
+      //return $request->all();
+      // Generate a random password
+      $autoPassword = 12341234;
+      // Save the user's photo
+      $photo = $request->file('photo');
+      $photo_name = $photo->getClientOriginalName();
+      $photo_storage = $photo->storeAs("public/uploads", $photo_name);
+      $photo_path = 'storage/uploads/' . $photo_name;
+      
+      // store  user data
+      $user = User::create([
+         'userType' => $request->userType,
+         'email' => $request->email,
+         'password' => Hash::make($autoPassword),
+      ]);
+
+      $phoneNumber = $request->countryCode . $request->phone;
+
+      // store Students data
+      $student = Student::create([
+         'userId' => $user->id,
+         'firstName' => $request->firstName,
+         'lastName' => $request->lastName,
+         'fathersName' => $request->fathersName,
+         'mothersName' => $request->mothersName,
+         'gender' => $request->gender,
+         'dob' => $request->dob,
+         'phone' => $request->phone,
+         'gurdianPhone' => $request->gurdianPhone,
+         'country' => $request->country,
+         'councilorComments' => $request->councilorComments,
+         'managerComment' => $request->managerComment,
+         'academicQualification' => $request->academicQualification,
+         'epGroup' => $request->epGroup,
+         'epScore' => $request->epScore,
+         'workExperience' => $request->workExperience,
+         'paymentMethods' => $request->paymentMethods,
+         'payAmount' => $request->payAmount,
+         'paymentDescription' => $request->paymentDescription,
+         'leadSource' => $request->leadSource,
+         'accHolderName' => $request->accHolderName,
+         'bankName' => $request->bankName,
+         'branch' => $request->branch,
+         'branchCode' => $request->branchCode,
+         'joinDate' => $request->joinDate,
+         'leavingDate' => $request->leavingDate,
+         'currentDate' => $request->currentDate,
+         'remindDate' => $request->remindDate,
+         'followupFor' => $request->followupFor,
+         'assignedTo' => $request->assignedTo,
+         'status' => $request->status,
+         'weightage' => $request->weightage,
+         'photo' => $photo_path,
+      ]);
+
+      // store financial data
+      $financial = Financial::create([
+         'userId' => $user->id,
+         'salaryType' => $request->salaryType,
+         'payScale' => $request->payScale,
+         'bankName' => $request->bankName,
+         'accHolderName' => $request->accHolderName,
+         'accNumber' => $request->accNumber,
+         'bankSortCode' => $request->bankSortCode,
+         'bankRoutingCode' => $request->bankRoutingCode,
+         'swiftCode' => $request->swiftCode,
+         'address1' => $request->address1,
+         'address2' => $request->address2,
+         'townCity' => $request->townCity,
+         'stateProvision' => $request->stateProvision,
+         'country' => $request->country,
+      ]);
+
+      
+      // save log data
+      $authEmployee = Auth::user()->employees;
+      $logData = ActivityLog::create([
+         'userId' => Auth::user()->id,
+         'activity' => $authEmployee->firstName . ' ' . $authEmployee->lastName . ' has created Student id : ' . $user->id,
+      ]);
+
+      // Send the login details to the user's email
+      // Mail::send('notification.studentInvitation', ['user' => $user, 'password' => $autoPassword], function ($message) use ($user) {
+      //    $message->to($user->email)->subject('Your account has been created successfully');
+      // });
+
+      // Flash a success message and redirect back
+      session()->flash('success', 'Student created successfully..!!');
+      return redirect()->back();
+   }
+
+   // Student List data
+   public function studentist()
+   {
+      $users = User::where('userType', 4)->get();
+      return view('superAdmin.students.index', ['users' => $users]);
+   }
+     //view Student profile
+     public function viewStudent($id)
+     {
+        $student = User::find($id);
+        return view('superAdmin.students.view', ['student' => $student]);
+     }
+
+
+
+
+   // Client section starts here
+   public function clientList()
+   {
+      $users = User::where('userType', 4)->get();
+      return view('superAdmin.clients.index', ['users' => $users]);
+   }
+   //view clients profile
+   public function viewClient($id)
+   {
+      $client = User::find($id);
+      return view('superAdmin.clients.view', ['client' => $client]);
+   }
+   public function setProfileClient()
+   {
+      $userTypes = UserType::whereNot('id', 1)->get();
+      $departments = Department::all();
+      $designations = Designation::all();
+
+      return view('pages.clients.setProfile', ['userTypes' => $userTypes, 'departments' => $departments, 'designations' => $designations]);
+   }
+   public function setProfileDataClient(Request $request)
+   {
+
+      // return $request->all();
+      // Save the user's photo
+      $photo = $request->file('photo');
+      $photo_name = $photo->getClientOriginalName();
+      $photo_storage = $photo->storeAs("public/uploads", $photo_name);
+      $photo_path = 'storage/uploads/' . $photo_name;
+
+      // update client data
+      Clients::where('userId', $request->profileId)->update([
+         'fathersName' => $request->fathersName,
+         'gender' => $request->gender,
+         'dob' => $request->dob,
+         'phone2' => $request->phone2,
+         'referenceName' => $request->referenceName,
+         'referencePhone' => $request->referencePhone,
+         'govId' => $request->govId,
+         'govIdNo' => $request->govIdNo,
+         'address1' => $request->address1,
+         'townCity1' => $request->townCity1,
+         'postZipCode1' => $request->postZipCode1,
+         'state1' => $request->state1,
+         'country1' => $request->country1,
+         'address2' => $request->address2,
+         'townCity2' => $request->townCity2,
+         'postZipCode2' => $request->postZipCode2,
+         'state2' => $request->state2,
+         'country2' => $request->country2,
+         'joinDate' => $request->joinDate,
+         'leaveDate' => $request->leaveDate,
+         'status' => $request->status,
+         'photo' => $photo_path,
+      ]);
+
+      Financial::where('userId', $request->profileId)->update([
+         'salaryType' => $request->salaryType,
+         'payScale' => $request->payScale,
+         'bankName' => $request->bankName,
+         'accHolderName' => $request->accHolderName,
+         'accNumber' => $request->accNumber,
+         'bankSortCode' => $request->bankSortCode,
+         'bankRoutingCode' => $request->bankRoutingCode,
+         'swiftCode' => $request->swiftCode,
+         'address1' => $request->address1,
+         'address2' => $request->address2,
+         'townCity' => $request->townCity,
+         'stateProvision' => $request->stateProvision,
+         'country' => $request->country,
+      ]);
+
+      // Flash a success message and redirect back
+      session()->flash('success', 'Profile data updated successfully..!!');
+      return redirect()->route('dashboard.client');
+   }
+
+   //add client form
+   public function createClient()
+   {
+      $userTypes = UserType::whereNot('id', 1)->paginate(10);
+      $departments = Department::all();
+      $designations = Designation::all();
+      return view('superAdmin.clients.create', ['userTypes' => $userTypes, 'departments' => $departments, 'designations' => $designations]);
+   }
+
+   public function storeClient(Request $request)
+   {
+      // return $request->all();
+      // Generate a random password
+      $autoPassword = Str::random(8);
+      // Save the user's photo
+      $photo = $request->file('photo');
+      $photo_name = $photo->getClientOriginalName();
+      $photo_storage = $photo->storeAs("public/uploads", $photo_name);
+      $photo_path = 'storage/uploads/' . $photo_name;
+      // store  user data
+      $user = User::create([
+         'userType' => $request->userType,
+         'email' => $request->email,
+         'password' => Hash::make($autoPassword),
+      ]);
+
+      $phoneNumber = $request->countryCode . $request->phone;
+
+      // store client data
+      $client = Clients::create([
+         'userId' => $user->id,
+         'firstName' => $request->firstName,
+         'lastName' => $request->lastName,
+         'nickName' => $request->nickName,
+         'phone1' => $phoneNumber,
+         'whatsappNo' => $request->whatsappNo,
+         'fathersName' => $request->fathersName,
+         'gender' => $request->gender,
+         'dob' => $request->dob,
+         'phone2' => $request->phone2,
+         'referenceName' => $request->referenceName,
+         'referencePhone' => $request->referencePhone,
+         'govId' => $request->govId,
+         'govIdNo' => $request->govIdNo,
+         'address1' => $request->address1,
+         'townCity1' => $request->townCity1,
+         'postZipCode1' => $request->postZipCode1,
+         'state1' => $request->state1,
+         'country1' => $request->country1,
+         'address2' => $request->address2,
+         'townCity2' => $request->townCity2,
+         'postZipCode2' => $request->postZipCode2,
+         'state2' => $request->state2,
+         'country2' => $request->country2,
+         'joinDate' => $request->joinDate,
+         'leaveDate' => $request->leaveDate,
+         'status' => $request->status,
+         'photo' => $photo_path,
+      ]);
+
+      // store financial data
+      $financial = Financial::create([
+         'userId' => $user->id,
+         'salaryType' => $request->salaryType,
+         'payScale' => $request->payScale,
+         'bankName' => $request->bankName,
+         'accHolderName' => $request->accHolderName,
+         'accNumber' => $request->accNumber,
+         'bankSortCode' => $request->bankSortCode,
+         'bankRoutingCode' => $request->bankRoutingCode,
+         'swiftCode' => $request->swiftCode,
+         'address1' => $request->address1,
+         'address2' => $request->address2,
+         'townCity' => $request->townCity,
+         'stateProvision' => $request->stateProvision,
+         'country' => $request->country,
+      ]);
+
+      // Send the login details to the user's email
+      Mail::send('notification.clientInvitation', ['user' => $user, 'password' => $autoPassword], function ($message) use ($user) {
+         $message->to($user->email)->subject('Your account has been created successfully');
+      });
+
+      // Flash a success message and redirect back
+      session()->flash('success', 'Client created successfully..!!');
+      return redirect()->back();
+   }
+
+   public function editClient($id)
+   {
+      $client = User::find($id);
+      $departments = Department::all();
+      $designations = Designation::all();
+      return view('superAdmin.clients.edit', ['client' => $client, 'departments' => $departments, 'designations' => $designations]);
+   }
+
+   //delete clients profile
+   public function deleteClient($id)
+   {
+      User::destroy($id);
+      Clients::destroy($id);
+      Financial::destroy($id);
+      session()->flash('delete', 'Account Deleted ..!!');
+      return redirect()->back();
+   }
+
+   //clients photoUpdate
+   public function photoUpdateClient(Request $request)
+   {
+      $url = "storage/";
+      $photo = $request->file('photo');
+      $photo_name = $photo->getClientOriginalName();
+      $photo_storage = $photo->storeAs("public/uploads", $photo_name);
+      $photo_path = 'storage/uploads/' . $photo_name;
+
+      Clients::where('userId', $request->userId)->update([
+         'photo' => $photo_path,
+      ]);
+      session()->flash('success', 'Photo updated successfully..!!');
+      return redirect()->back();
+   }
+   //Clients infoUpdate
+   public function infoUpdateClient(Request $request)
+   {
+      Clients::where('userId', $request->id)->update([
+         'firstName' => $request->firstName,
+         'lastName' => $request->lastName,
+         'fathersName' => $request->fathersName,
+         'gender' => $request->gender,
+         'dob' => $request->dob,
+         'phone' => $request->phone,
+         'presentAddress' => $request->presentAddress,
+         'permanentAddress' => $request->permanentAddress,
+         'referenceName' => $request->referenceName,
+         'referencePhone' => $request->referencePhone,
+         'govId' => $request->govId,
+         'govIdNo' => $request->govIdNo,
+      ]);
+      session()->flash('success', 'Client Info updated successfully..!!');
+      return redirect()->back();
+   }
+   //Clients companyInfoUpdate
+   public function companyInfoUpdateClient(Request $request)
+   {
+      Clients::where('userId', $request->id)->update([
+         'department' => $request->department,
+         'designation' => $request->designation,
+         'joinDate' => $request->joinDate,
+         'leaveDate' => $request->leaveDate,
+         'status' => $request->status,
+         'shift' => $request->shift,
+         'hiringManager' => $request->hiringManager,
+      ]);
+      session()->flash('success', 'Company Info updated successfully..!!');
+      return redirect()->back();
+   }
+   //Clients financialInfoUpdate
+   public function financialInfoUpdateClient(Request $request)
+   {
+      Financial::where('userId', $request->id)->update([
+         'salaryType' => $request->salaryType,
+         'payScale' => $request->payScale,
+         'accHolderName' => $request->accHolderName,
+         'accNumber' => $request->accNumber,
+         'bankName' => $request->bankName,
+         'branch' => $request->branch,
+         'branchCode' => $request->branchCode,
+      ]);
+      session()->flash('success', 'Financial Info updated successfully..!!');
+      return redirect()->back();
+   }
+}
