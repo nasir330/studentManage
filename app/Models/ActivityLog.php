@@ -11,6 +11,6 @@ class ActivityLog extends Model
     protected $guarded = [];
 
     public function employees(){
-        return $this->belongsTo(Employees::class,'id','userId');
+        return $this->belongsTo(Employees::class,'userId');
     }
 }
