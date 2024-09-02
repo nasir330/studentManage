@@ -54,7 +54,9 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/add-student', [userController::class, 'createStudent'])->name('admin.add.student');
     Route::post('/add-student', [userController::class, 'storeStudent'])->name('admin.add.student');
     Route::get('/student-list', [userController::class, 'studentist'])->name('admin.student.list');
-     Route::get('/student-view/{id}',[UserController::class,'viewStudent'])->name('admin.view.student');
+    Route::get('/student-view/{id}',[UserController::class,'viewStudent'])->name('admin.view.student');
+    Route::get('/student-edit/{id}',[UserController::class,'editStudent'])->name('admin.edit.student');
+    Route::post('/student-info-update',[UserController::class,'infoUpdateStudent'])->name('admin.infoUpdate.student');
     // Route::get('/client-list', [userController::class, 'clientList'])->name('admin.client.list');
     // Route::get('/export-users',[userController::class, 'exportUser'])->name('exportUser');
     // Route::get('/send-employee-link', [EmployeeController::class, 'sendLink'])->name('admin.sendLink.employee');
@@ -113,6 +115,9 @@ Route::middleware('auth')->prefix('admin')->group(function () {
 
     // Reports
     Route::get('/report', [ActivityLogController::class,'index'])->name('admin.report');
+    Route::get('/report-employee-log/{id}', [ActivityLogController::class,'viewEmployeeLog'])->name('admin.report.viewEmployeeLog');
+    Route::get('/report-student-log/{id}', [ActivityLogController::class,'viewStudentLog'])->name('admin.report.viewStudentLog');
+   
 
 });
 

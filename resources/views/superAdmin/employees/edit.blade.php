@@ -76,14 +76,7 @@
                                         <input class="form-control" type="text" name="lastName"
                                             value="{{$employee->employees->lastName}}">
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Fathers Name</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="fathersName"
-                                            value="{{$employee->employees->fathersName}}">
-                                    </td>
-                                </tr>
+                                </tr>                                
                                 <tr>
                                     <td style="width:30%;">Gender</td>
                                     <td>
@@ -107,52 +100,10 @@
                                 <tr>
                                     <td style="width:30%;">Contact No</td>
                                     <td>
-                                        <input class="form-control" type="text" name="phone"
-                                            value="{{$employee->employees->phone}}">
+                                        <input class="form-control" type="text" name="phone1"
+                                            value="{{$employee->employees->phone1}}">
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Present Address</td>
-                                    <td style="white-space: pre-line">
-                                        <textarea class="form-control" name="presentAddress"
-                                            rows="5"> {{$employee->employees->presentAddress}}</textarea>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Permanent Address</td>
-                                    <td style="white-space: pre-line">
-                                        <textarea class="form-control" name="permanentAddress"
-                                            rows="5"> {{$employee->employees->permanentAddress}}</textarea>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Reference by</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="referenceName"
-                                            value="{{$employee->employees->referenceName}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Reference Contact</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="referencePhone"
-                                            value="{{$employee->employees->referencePhone}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Identity Type</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="govId"
-                                            value="{{$employee->employees->govId}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Identity No</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="govIdNo"
-                                            value="{{$employee->employees->govIdNo}}">
-                                    </td>
-                                </tr>
+                                </tr>                                 
                             </tbody>
                         </table>
                         <div class="col-md-4 mt-2">

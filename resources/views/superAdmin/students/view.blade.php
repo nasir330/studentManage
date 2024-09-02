@@ -1,22 +1,22 @@
 @extends('layouts.header')
-@section('title','View Profile')
+@section('title', 'View Profile')
 
 @section('content')
 <div class="row clearfix row-deck">
     <div class="col-md-4">
         <div class="card">
-            <div class="card-header d-flex justify-content-center">              
-               <span style="font-size:18px; font-weight:bold;">
-               {{$student->userTypes->type}}
-               </span>
+            <div class="card-header d-flex justify-content-center">
+                <span style="font-size:18px; font-weight:bold;">
+                    {{$student->userTypes->type}}
+                </span>
             </div>
             <div class="card-body">
                 <div id="clientPhoto" class="text-center">
                     <img src="{{asset('')}}{{$student->students->photo}}" class="img-fluid" alt="User Image">
                 </div>
                 <h4 class="text-center mt-2">
-                {{$student->students->firstName.' '.$student->students->lastName}}
-                    
+                    {{$student->students->firstName . ' ' . $student->students->lastName}}
+
                 </h4>
                 <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist"
                     aria-orientation="vertical">
@@ -81,7 +81,7 @@
                                 <td style="width:30%;">Country</td>
                                 <td>{{$student->students->country}}
                                 </td>
-                            </tr>                           
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -97,21 +97,40 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered text-nowrap mb-0">
-                        <tbody>
-                            <tr>
-                                <td style="width:30%;">Document-1</td>
-                                <td> </td>
-                            </tr>
-                            <tr>
-                                <td style="width:30%;">Document-2</td>
-                                <td> </td>
-                            </tr>
-                            <tr>
-                                <td style="width:30%;">Document-3</td>
-                                <td> </td>
-                            </tr>
-                           
+                        <tbody class="text-center">
+                            @php
+                                $documents = json_decode($student->students->documents, true);
+                            @endphp
+                            @if(!empty($documents) && is_array($documents))
+                                @foreach($documents as $index => $document)
+                                    <tr>
+                                        <td>
+                                            @if(preg_match('/\.(jpg|jpeg|png|gif)$/i', $document))
+                                                <img src="{{ asset($document) }}" alt="Document-{{ $index + 1 }}"
+                                                    style="width: 75%; height: 350px; object-fit: cover;">
+                                            @elseif(preg_match('/\.(pdf)$/i', $document))
+                                                <iframe src="{{ asset($document) }}" style="width: 75%; height: 350px;"
+                                                    frameborder="0"></iframe>
+                                            @elseif(preg_match('/\.(doc|docx|xls|xlsx|ppt|pptx)$/i', $document))
+                                                <iframe
+                                                    src="https://view.officeapps.live.com/op/embed.aspx?src={{ asset($document) }}"
+                                                    style="width: 75%; height: 350px;" frameborder="0"></iframe>
+                                            @else
+                                                <a href="{{ asset($document) }}" target="_blank">{{ basename($document) }}</a>
+                                            @endif
+                                            <br />
+                                            <a href="{{ asset($document) }}" download>Download Document</a>
+                                        </td>
+
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="1">No documents available</td>
+                                </tr>
+                            @endif
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -128,7 +147,7 @@
                 <div class="table-responsive">
                     <table class="table table-bordered text-nowrap mb-0">
                         <tbody>
-                            
+
                             <tr>
                                 <td style="width:30%;">Account Holder Name</td>
                                 <td>{{$student->financials->accHolderName}}</td>

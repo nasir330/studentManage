@@ -13,14 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('students', function (Blueprint $table) {
+        Schema::create('students_update_fields', function (Blueprint $table) {
             $table->id();
             $table->foreignId('userId')->unsigned()->constrained('users')->onUpdate('cascade')->onDelete('cascade');           
-            $table->string('firstName');
-            $table->string('lastName');
-            $table->string('fathersName');
+            $table->string('logId')->nullable();
+            $table->string('firstName')->nullable();
+            $table->string('lastName')->nullable();
+            $table->string('fathersName')->nullable();
             $table->string('mothersName')->nullable();
-            $table->string('gender');
+            $table->string('gender')->nullable();
             $table->string('dob')->nullable();
             $table->string('phone')->nullable();           
             $table->string('gurdianPhone')->nullable();
@@ -47,9 +48,7 @@ return new class extends Migration
             $table->string('followupFor')->nullable();
             $table->string('assignedTo')->nullable();
             $table->string('status')->nullable();
-            $table->string('weightage')->nullable();
-            $table->string('photo')->nullable();
-            $table->string('documents')->nullable();
+            $table->string('weightage')->nullable();           
             $table->timestamps();
         });
     }
@@ -61,6 +60,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('students');
+        Schema::dropIfExists('students_update_fields');
     }
 };

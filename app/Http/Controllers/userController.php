@@ -6,6 +6,8 @@ use App\Models\Clients;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Employees;
+use App\Models\EmployeeUpdateFields;
+use App\Models\StudentsUpdateFields;
 use App\Models\Student;
 use App\Models\Financial;
 use App\Models\UserType;
@@ -104,7 +106,7 @@ class userController extends Controller
    //add employee form
    public function createEmployee()
    {
-      $userTypes = UserType::where('id', 3)->paginate(10);
+      $userTypes = UserType::where('id', 3)->first();
       return view('superAdmin.employees.create', ['userTypes' => $userTypes]);
    }
    //store employee data
@@ -114,18 +116,35 @@ class userController extends Controller
       // Generate a random password
       //$autoPassword = Str::random(8);
       $autoPassword = 12345678;
-
+      $password = "";
+      if (!empty($request->password)) {
+         $password = $request->password;
+      } else {
+         $password = $autoPassword;
+      }
       // Save the user's photo
       $photo = $request->file('photo');
       $photo_name = $photo->getClientOriginalName();
       $photo_storage = $photo->storeAs("public/uploads", $photo_name);
       $photo_path = 'storage/uploads/' . $photo_name;
+      // Store document paths
+      $document_paths = [];
+      if ($request->hasFile('docs')) {
+         foreach ($request->file('docs') as $doc) {
+            $doc_name = $doc->getClientOriginalName();
+            $doc_storage = $doc->storeAs("public/uploads/documents", $doc_name);
+            $doc_path = 'storage/uploads/documents/' . $doc_name;
+            $document_paths[] = $doc_path;
+         }
+      }
+      // Convert document paths array to JSON
+      $documents_json = json_encode($document_paths);
 
       // store  user data
       $user = User::create([
          'userType' => $request->userType,
          'email' => $request->email,
-         'password' => Hash::make($autoPassword),
+         'password' => Hash::make($password),
       ]);
 
       // store employee data
@@ -164,7 +183,7 @@ class userController extends Controller
          'status' => $request->status,
          'shift' => $request->shift,
          'hiringManager' => $request->hiringManager,
-         'photo' => $photo_path,
+         'photo' => $photo_path,         
          'salaryType' => $request->salaryType,
          'payScale' => $request->payScale,
       ]);
@@ -196,7 +215,7 @@ class userController extends Controller
       ]);
 
       // Send the login details to the user's email
-      Mail::send('notification.employeeInvitation', ['user' => $user, 'password' => $autoPassword], function ($message) use ($user) {
+      Mail::send('notification.employeeInvitation', ['user' => $user, 'password' => $password], function ($message) use ($user) {
          $message->to($user->email)->subject('Your account has been created successfully');
       });
 
@@ -243,26 +262,45 @@ class userController extends Controller
       session()->flash('success', 'Photo updated successfully..!!');
       return redirect()->back();
    }
-   //employees infoUpdate
+  // Employees infoUpdate
    public function infoUpdateEmployee(Request $request)
    {
-      Employees::where('userId', $request->id)->update([
-         'firstName' => $request->firstName,
-         'lastName' => $request->lastName,
-         'fathersName' => $request->fathersName,
-         'gender' => $request->gender,
-         'dob' => $request->dob,
-         'phone' => $request->phone,
-         'presentAddress' => $request->presentAddress,
-         'permanentAddress' => $request->permanentAddress,
-         'referenceName' => $request->referenceName,
-         'referencePhone' => $request->referencePhone,
-         'govId' => $request->govId,
-         'govIdNo' => $request->govIdNo,
+      // Fetch the current employee data from the database
+      $currentEmployee = Employees::where('userId', $request->id)->first();
+
+      // Save log data
+      $authEmployee = Auth::user()->employees;
+      $logData = ActivityLog::create([
+         'userId' => Auth::user()->id,
+         'activity' => "{$authEmployee->firstName} {$authEmployee->lastName} has updated employee id: {$request->id}",
       ]);
+
+      // List of fields to compare and update
+      $fieldsToCheck = ['firstName', 'lastName', 'gender', 'dob', 'phone1'];
+
+      // Array to hold updated fields
+      $updatedFields = ['userId' => $request->id];
+
+      // Loop through each field and compare values
+      foreach ($fieldsToCheck as $field) {
+         if ($currentEmployee->$field !== $request->$field) {
+               $updatedFields[$field] = $request->$field;
+         }
+      }
+
+      // Update the employee record if there are any changes
+      if (count($updatedFields) > 1) {  // Check if there are fields other than userId
+         $updateEmployees = $currentEmployee->update($updatedFields);
+         if ($updateEmployees) {
+               $updatedFields['logId'] = $logData->id;
+               EmployeeUpdateFields::create($updatedFields);
+         }
+      }
+
       session()->flash('success', 'Employee Info updated successfully..!!');
       return redirect()->back();
    }
+
    //employees companyInfoUpdate
    public function companyInfoUpdateEmployee(Request $request)
    {
@@ -295,7 +333,7 @@ class userController extends Controller
    }
    public function exportUser()
    {
-      return Excel::download(new UsersExport, 'users.xls');
+      // return Excel::download(new UsersExport, 'users.xls');
    }
 
    //  ########### Student Section Star here ###########   
@@ -318,7 +356,19 @@ class userController extends Controller
       $photo_name = $photo->getClientOriginalName();
       $photo_storage = $photo->storeAs("public/uploads", $photo_name);
       $photo_path = 'storage/uploads/' . $photo_name;
-      
+
+            // Store document paths
+            $document_paths = [];
+            if ($request->hasFile('docs')) {
+               foreach ($request->file('docs') as $doc) {
+                  $doc_name = $doc->getClientOriginalName();
+                  $doc_storage = $doc->storeAs("public/uploads/documents", $doc_name);
+                  $doc_path = 'storage/uploads/documents/' . $doc_name;
+                  $document_paths[] = $doc_path;
+               }
+            }
+            // Convert document paths array to JSON
+            $documents_json = json_encode($document_paths);
       // store  user data
       $user = User::create([
          'userType' => $request->userType,
@@ -363,6 +413,7 @@ class userController extends Controller
          'status' => $request->status,
          'weightage' => $request->weightage,
          'photo' => $photo_path,
+         'documents' => $documents_json,
       ]);
 
       // store financial data
@@ -383,7 +434,7 @@ class userController extends Controller
          'country' => $request->country,
       ]);
 
-      
+
       // save log data
       $authEmployee = Auth::user()->employees;
       $logData = ActivityLog::create([
@@ -407,12 +458,66 @@ class userController extends Controller
       $users = User::where('userType', 4)->get();
       return view('superAdmin.students.index', ['users' => $users]);
    }
-     //view Student profile
-     public function viewStudent($id)
-     {
-        $student = User::find($id);
-        return view('superAdmin.students.view', ['student' => $student]);
-     }
+   //view Student profile
+   public function viewStudent($id)
+   {
+      $student = User::find($id);
+      return view('superAdmin.students.view', ['student' => $student]);
+   }
+    //edit Student profile
+    public function editStudent($id)
+    {
+      $student = User::find($id);     
+      return view('superAdmin.students.edit', ['student' => $student]);
+       
+    }
+    //Student infoUpdate
+    public function infoUpdateStudent(Request $request)
+    {
+       //return $request->all();
+ 
+       // Fetch the current student record from the database
+      $currentStudent = Student::where('userId', $request->id)->first();
+     
+       // save log data
+       $authEmployee = Auth::user()->employees;
+       $logData = ActivityLog::create([
+          'userId' => Auth::user()->id,
+          'activity' => $authEmployee->firstName . ' ' . $authEmployee->lastName . ' has updated Student id : ' . $request->id,
+       ]);
+
+      // List of fields to compare and update
+      $fieldsToCheck = [
+         'firstName', 'lastName', 'fathersName', 'mothersName', 'gender', 'dob',
+         'phone', 'gurdianPhone', 'country', 'councilorComments', 'managerComment',
+         'academicQualification', 'epGroup', 'epScore', 'workExperience', 'paymentMethods',
+         'payAmount', 'paymentDescription', 'leadSource', 'accHolderName', 'accNumber',
+         'bankName', 'branch', 'branchCode', 'joinDate', 'leavingDate', 'currentDate',
+         'remindDate', 'followupFor', 'assignedTo', 'status', 'weightage'
+      ];
+
+// Array to hold updated fields
+$updatedFields = ['userId' => $request->id];
+
+// Loop through each field and compare values
+foreach ($fieldsToCheck as $field) {
+    if ($currentStudent->$field !== $request->$field) {
+        $updatedFields[$field] = $request->$field;
+    }
+}
+
+   // Update the student record if there are any changes
+   if (count($updatedFields) > 1) {  // Check if there are fields other than userId
+      $updateStudents = $currentStudent->update($updatedFields);
+      if ($updateStudents) {
+            $updatedFields['logId'] = $logData->id;
+            StudentsUpdateFields::create($updatedFields);
+      }
+   }
+       
+       session()->flash('success', 'Employee Info updated successfully..!!');
+       return redirect()->back();
+    }
 
 
 

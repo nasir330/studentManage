@@ -59,7 +59,7 @@
                                                             </a>
                                                         </li>
                                                         <li class="dropdown-item">
-                                                            <a href="{{ route('admin.edit.employee', ['id' => $user->id]) }}">
+                                                            <a href="{{ route('admin.edit.student', ['id' => $user->id]) }}">
                                                                 <i class="dropdown-icon fa fa-edit"></i>
                                                                 edit
                                                             </a>

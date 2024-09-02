@@ -1,369 +1,415 @@
 @extends('layouts.header')
-@section('title','Edit Client')
+@section('title', 'Edit Students')
 
 @section('content')
+
+<!-- sales overview start -->
 <div class="row clearfix row-deck">
-    @if(session()->has('success'))
-    <div id="successMessage" class="text-center text-success p-2 ml-3">
-        <span style="color:green;">{{session('success')}}</span>
-    </div>
-    @endif
-    <div class="col-md-4">
+    <div class="col mb-2">
         <div class="card">
-            <div class="card-header">
-                {{$client->clients->firstName.' '.$client->clients->lastName}}
-            </div>
-            <div class="card-body">
-                <div id="clientPhoto" class="text-center">
-                    <img src="{{asset('')}}{{$client->clients->photo}}" class="img-fluid" alt="User Image">
-                    <div class="photo-edit-btn">
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#photoEdit">
-                            <i class="icon fa-solid fa-camera"></i>
-                        </a>
-                    </div>
+            <div class="card-header text-center">
+                <h3 class="card-title">Edit Student</h3>
+                @if (session()->has('success'))
+                <div id="successMessage" class="text-center text-success p-2 ml-3">
+                    <span style="color:green;">{{ session('success') }}</span>
                 </div>
-                <h4 class="text-center mt-2">
-                    @if(!empty($client->clients->departments))
-                    {{$client->clients->departments->department}} <br>
-                    <span style="font-size:16px;">
-                        {{$client->clients->departments->designations->designation}}
-                    </span>
-                    @else
-                    {{'NA'}} <br>
-                    <span style="font-size:16px;">
-                        {{'NA'}}
-                    </span>
-                    @endif
+                @endif
+            </div>
+            <div class="card-body p-2">
+                <form action="{{ route('admin.infoUpdate.student') }}" method="post">
+                    @csrf
 
-                </h4>
-                <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist"
-                    aria-orientation="vertical">
-                    <a class="nav-link active" id="personalInfo" data-toggle="pill" href="#tab-personalInfo" role="tab"
-                        aria-controls="tab-personalInfo" aria-selected="true">Personal Information</a>
-                    <a class="nav-link" id="companyInfo" data-toggle="pill" href="#tab-companyInfo" role="tab"
-                        aria-controls="tab-companyInfo" aria-selected="false">Company
-                        Information</a>
-                    <a class="nav-link" id="financialInfo" data-toggle="pill" href="#tab-financialInfo" role="tab"
-                        aria-controls="tab-financialInfo" aria-selected="false">Financial</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-8 tab-content" id="vert-tabs-tabContent">
-        <!-- Personal Information card start -->
-        <div class="card tab-pane text-left fade show active" id="tab-personalInfo" role="tabpanel"
-            aria-labelledby="personalInfo">
-            <div class="card-header">
-                {{'Personal Details'}}
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <form action="{{route('admin.infoUpdate.client')}}" method="post">
-                        @csrf
-                        <table class="table table-bordered text-nowrap mb-0">
-                            <tbody>
-                                <tr>
-                                    <td style="width:30%;">First Name</td>
-                                    <td>
-                                        <input type="hidden" name="id" value="{{$client->id}}">
-                                        <input class="form-control" type="text" name="firstName"
-                                            value="{{$client->clients->firstName}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Last Name</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="lastName"
-                                            value="{{$client->clients->lastName}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Fathers Name</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="fathersName"
-                                            value="{{$client->clients->fathersName}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Gender</td>
-                                    <td>
-                                        <div class="input-group mb-2">
-                                            <select name="gender" class="form-select form-control" required>
-                                                <option value="{{$client->clients->gender}}">
-                                                    {{$client->clients->gender}}</option>
-                                                <option value="Male">Male</option>
-                                                <option value="Female">Female</option>
-                                            </select>
+                    <div id="boxitem" class="row">
+                        <!-- Personal and Auth Information start -->
+                        <div class="col-md-6">
+                            <!-- Personal info start -->
+                            <div class="card">
+                                <div class="card-header">
+                                    Student's Information
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="firstName" class="mb-0">First Name</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="firstName" class="form-control" value="{{$student->students->firstName}}">
+                                                <input type="hidden" name="id" value="{{$student->students->userId}}">
+                                            </div>
                                         </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Birth Date</td>
-                                    <td>
-                                        <input class="form-control" type="date" name="dob"
-                                            value="{{$client->clients->dob}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Contact No</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="phone"
-                                            value="{{$client->clients->phone}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Present Address</td>
-                                    <td style="white-space: pre-line">
-                                        <textarea class="form-control" name="presentAddress"
-                                            rows="5"> {{$client->clients->presentAddress}}</textarea>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Permanent Address</td>
-                                    <td style="white-space: pre-line">
-                                        <textarea class="form-control" name="permanentAddress"
-                                            rows="5"> {{$client->clients->permanentAddress}}</textarea>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Reference by</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="referenceName"
-                                            value="{{$client->clients->referenceName}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Reference Contact</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="referencePhone"
-                                            value="{{$client->clients->referencePhone}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Identity Type</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="govId"
-                                            value="{{$client->clients->govId}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Identity No</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="govIdNo"
-                                            value="{{$client->clients->govIdNo}}">
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="col-md-4 mt-2">
-                            <button type="submit" class="btn btn-primary form-control">
-                                Update Now
+                                        <div class="col-md-6">
+                                            <label for="lastName" class="mb-0">Last Name</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="lastName" class="form-control" value="{{$student->students->lastName}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="fathersName" class="mb-0">Fathers
+                                                Name</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="fathersName" class="form-control" value="{{$student->students->fathersName}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="mothersName" class="mb-0">Mothers Name</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="mothersName" class="form-control" value="{{$student->students->mothersName}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-12">
+                                            <label for="gender" class="mb-0">Gender</label>
+                                            <div class="input-group mb-2">
+                                                <select name="gender" class="form-select form-control">
+                                                    <option value="">--Select Gender--</option>
+                                                    <option value="{{$student->students->firstName}}" selected>{{$student->students->gender}}</option>
+                                                    <option value="Male">Male</option>
+                                                    <option value="Female">Female</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="dob" class="mb-0">Date of Birth</label>
+                                            <div class="input-group mb-2">
+                                                <input type="date" name="dob" class="form-control" value="{{$student->students->dob}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="phone" class="mb-0">Phone</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="phone" class="form-control" value="{{$student->students->phone}}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="email" class="mb-0">Email</label>
+                                            <div class="input-group mb-2">
+                                                <input type="email" name="email" class="form-control" value="{{$student->email}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="gurdianPhone" class="mb-0">Gurdian's Phone</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="gurdianPhone" class="form-control" value="{{$student->students->gurdianPhone}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-12">
+                                            <label for="country" class="mb-0">Prefered Country</label>
+                                            <div class="input-group mb-2">
+                                                <select name="country" class="form-select form-control">
+                                                    <option value="">--Select Country--</option>
+                                                    <option value="{{$student->students->firstName}}" selected>
+                                                    {{$student->students->country}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="councilorComments" class="mb-0">Counselor Comments</label>
+                                            <div class="input-group mb-2">
+                                                <textarea name="councilorComments" rows="3"
+                                                    class="form-control">{{$student->students->councilorComments}}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="managerComment" class="mb-0">Manager's Comments</label>
+                                            <div class="input-group mb-2">
+                                                <textarea name="managerComment" rows="3"
+                                                    class="form-control">{{$student->students->managerComment}}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                    
+                                </div>
+                            </div>
+                            <!-- Personal info end -->
+
+                            <!-- Auth info start -->
+                            <div class="card">
+                                <div class="card-header">
+                                    Academic Qualifications
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-2">
+                                        <div class="col-md-12">
+                                            <label for="academicQualification" class="mb-0">Write down into the
+                                                box..</label>
+                                            <div class="input-group mb-2">
+                                                <textarea name="academicQualification" rows="3"
+                                                    class="form-control">{{$student->students->academicQualification}}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="epGroup" class="mb-0"> English Profiency</label>
+                                            <div class="input-group mb-2">
+                                                <select id="epGroup" name="epGroup" class="form-select form-control"
+                                                    required>
+                                                    <option value="">--Select Item--</option>
+                                                    <option value="{{$student->students->egGroup}}" selected>{{$student->students->egGroup}}</option>
+                                                    <option value="IELTS">IELTS</option>
+                                                    <option value="PTE">PTE</option>
+                                                    <option value="PTE">OIETC</option>
+                                                    <option value="PTE">DUOLINGO</option>
+                                                    <option value="PTE">MOI</option>
+                                                    <option value="PTE">PSI</option>
+                                                    <option value="PTE">OTHERS</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="epScore" class="mb-0">Score</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="epScore" class="form-control" value="{{$student->students->epScore}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-12">
+                                            <label for="workExperience" class="mb-0">Work Experience</label>
+                                            <div class="input-group mb-2">
+                                                <textarea name="workExperience" rows="3"
+                                                    class="form-control">{{$student->students->workExperience}}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Auth info end -->
+                        </div>
+                        <!-- Personal and Auth Information end -->
+
+
+                        <div class="col-md-6">
+                            <!-- Company info start -->
+
+                            <!-- Company info end -->
+
+                            <!-- Financial info start -->
+                            <div class="card">
+                                <div class="card-header">
+                                    Payments
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="paymentMethods" class="mb-0">Payment Methods</label>
+                                            <div class="input-group mb-2">
+                                                <select name="paymentMethods" class="form-select form-control">
+                                                    <option value="">--Select Methods--</option>
+                                                    <option value="{{$student->students->paymentMethods}}" selected>{{$student->students->paymentMethods}}</option>
+                                                    <option value="Monthly">Bank</option>
+                                                    <option value="Weekly">VISA/MASTER CARD</option>
+                                                    <option value="Daily">Cash</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="payAmount" class="mb-0">Amount</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="payAmount" class="form-control" value="{{$student->students->payAmount}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-12">
+                                            <label for="paymentDescription" class="mb-0">Description</label>
+                                            <div class="input-group mb-2">
+                                                <textarea name="paymentDescription" rows="3"
+                                                    class="form-control">{{$student->students->paymentDescription}}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label for="leadSource" class="mb-0">Lead Source</label>
+                                            <div class="input-group mb-2">
+                                                <select name="leadSource" class="form-select form-control">
+                                                    <option value="">--Select--</option>
+                                                    <option value="{{$student->students->leadSource}}" selected>{{$student->students->leadSource}}</option>
+                                                    <option value="Facebook">Facebook</option>
+                                                    <option value="Online">Online</option>
+                                                    <option value="Walking">Walking</option>
+                                                    <option value="Reference">Reference</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="accHolderName" class="mb-0">Account Holder
+                                                Name</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="accHolderName" class="form-control" value="{{$student->students->accHolderName}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="accNumber" class="mb-0">Account
+                                                Number</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="accNumber" class="form-control" value="{{$student->students->accNumber}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <label for="bankName" class="mb-0">Bank Name</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="bankName" class="form-control" value="{{$student->students->bankName}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="branch" class="mb-0">Branch Name</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="branch" class="form-control" value="{{$student->students->branch}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="branchCode" class="mb-0">Branch Code</label>
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="branchCode" class="form-control" value="{{$student->students->branchCode}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="joinDate" class="mb-0">Join Date</label>
+                                            <div class="input-group mb-2">
+                                                <input type="date" name="joinDate" class="form-control" value="{{$student->students->joinDate}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="leavingDate" class="mb-0">Leaving Date</label>
+                                            <div class="input-group mb-2">
+                                                <input type="date" name="leavingDate" class="form-control" value="{{$student->students->leavingDate}}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- Financial info end -->
+                            <!-- Others Information start -->
+                            <div class="card">
+                                <div class="card-header">
+                                    Other's
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="currentDate" class="mb-0">Current Date</label>
+                                            <div class="input-group mb-2">
+                                                <input type="date" name="currentDate" class="form-control" value="{{$student->students->currentDate}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="remindDate" class="mb-0">Reminder Date</label>
+                                            <div class="input-group mb-2">
+                                                <input type="date" name="remindDate" class="form-control" value="{{$student->students->remindDate}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-12">
+                                            <label for="followupFor" class="mb-0">Follow up for</label>
+                                            <div class="input-group mb-2">
+                                                <textarea name="followupFor" rows="3" class="form-control">{{$student->students->followupFor}}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="assignedTo" class="mb-0">Assigned to</label>
+                                            <div class="input-group mb-2">
+                                                <select name="assignedTo" class="form-select form-control" required>
+                                                    <option value="">--Select Councilor's--</option>
+                                                    <option value="{{$student->students->assignedTo}}" selected>
+                                                    {{$student->students->assignedTo}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="status" class="mb-0">Status</label>
+                                            <div class="input-group mb-2">
+                                                <select name="status" class="form-select form-control" required>
+                                                    <option value="">--Status--</option>
+                                                    <option value="{{$student->students->status}}" selected>{{$student->students->status}}</option>
+                                                    <option value="Inactive">Inactive</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-md-12">
+                                            <label for="weightage" class="mb-0">Weightage</label>
+                                            <div class="input-group mb-2">
+                                                <select name="weightage" class="form-select form-control" required>
+                                                    <option value="">--Select--</option>
+                                                    <option value="{{$student->students->weightage}}" selected>{{$student->students->weightage}}</option>
+                                                    <option value="Good">Good</option>
+                                                    <option value="Bad">Bad</option>
+                                                    <option value="Cold">Cold</option>
+                                                    <option value="Dead">Dead</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- Others Information end -->
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-2 float-end">
+                        <div class="input-group">
+                            <button class="btn btn-primary">
+                                Update
                             </button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
-        <!-- Personal Information card end -->
-
-        <!-- Company Information card start -->
-        <div class="card tab-pane text-left fade" id="tab-companyInfo" role="tabpanel" aria-labelledby="companyInfo">
-            <div class="card-header">
-                {{'Company Information'}}
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <form action="{{route('admin.companyInfoUpdate.client')}}" method="post">
-                        @csrf
-                        <table class="table table-bordered text-nowrap mb-0">
-                            <tbody>
-                                <tr>
-                                    <td style="width:30%;">Department</td>
-                                    <td>
-                                        <input type="hidden" name="id" value="{{$client->id}}">
-                                        <select name="department" class="form-select form-control" required>
-                                            @if(!empty($client->clients->departments))
-                                            <option value="{{$client->clients->department}}">
-                                                {{$client->clients->departments->department}}
-                                            </option>
-                                            @else
-                                            @foreach($departments as $key=> $department)
-                                            <option value="{{$department->id}}">
-                                                {{$department->department}}</option>
-                                            @endforeach
-                                            @endif
-                                            
-                                           
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Designation</td>
-                                    <td>
-                                        <select name="designation" class="form-select form-control" required>
-                                            @if(!empty($client->clients->departments->designations))
-                                            <option value="{{$client->clients->designation}}">
-                                                {{$client->clients->departments->designations->designation}}
-                                            </option>
-                                            @else
-                                            @foreach($designations as $key=> $designation)
-                                            <option value="{{$designation->id}}">
-                                                {{$designation->designation}}</option>
-                                            @endforeach
-                                            @endif
-                                            
-                                           
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Join Date</td>
-                                    <td>
-                                        <input class="form-control" type="date" name="joinDate"
-                                            value="{{$client->clients->joinDate}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Leave Date</td>
-                                    <td>
-                                        <input class="form-control" type="date" name="leaveDate"
-                                            value="{{$client->clients->leaveDate}}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Status</td>
-                                    <td>
-                                        <select name="status" class="form-select form-control" required>
-                                            <option value="{{$client->clients->status}}">
-                                                {{$client->clients->status}}</option>
-                                            <option value="Active">Active</option>
-                                            <option value="Inactive">Inactive</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Shift</td>
-                                    <td>
-                                        <select name="shift" class="form-select form-control" required>
-                                            <option value="{{$client->clients->shift}}">
-                                                {{$client->clients->shift}}</option>
-                                            <option value="Day">Day</option>
-                                            <option value="Night">Night</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Hiring Manager</td>
-                                    <td>
-                                        <select name="hiringManager" class="form-select form-control" required>
-                                            <option value="{{$client->clients->hiringManager}}">
-                                                {{$client->clients->hiringManager}}</option>
-                                            <option value="HR Manager">HR Manager</option>
-                                            <option value="Executive Manager">Executive
-                                                Manager</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="col-md-4 mt-2">
-                            <button type="submit" class="btn btn-primary form-control">
-                                Update Now
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!-- Company Information card end -->
-
-        <!-- Financial Information card start -->
-        <div class="card tab-pane text-left fade" id="tab-financialInfo" role="tabpanel"
-            aria-labelledby="financialInfo">
-            <div class="card-header">
-                {{ 'Financial Information' }}
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <form action="{{route('admin.financialInfoUpdate.client')}}" method="post">
-                        @csrf
-                        <table class="table table-bordered text-nowrap mb-0">
-                            <tbody>
-                                <tr>
-                                    <td style="width:30%;">Payscale Type</td>
-                                    <td>
-                                        <input type="hidden" name="id" value="{{ $client->id }}">
-                                        <select name="salaryType" class="form-select form-control" required>
-                                            <option value="{{ $client->financials->salaryType }}">
-                                                {{ $client->financials->salaryType }}</option>
-                                            <option value="Monthly">Monthly</option>
-                                            <option value="Weekly">Weekly</option>
-                                            <option value="Daily">Daily</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Payscale</td>
-                                    <td>
-                                        <select name="payScale" class="form-select form-control" required>
-                                            <option value=" {{ $client->financials->payScale }}">
-                                                {{ $client->financials->payScale }}</option>
-                                            <option value="10000">10000</option>
-                                            <option value="2400">2400</option>
-                                            <option value="50">50</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Account Holder Name</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="accHolderName"
-                                            value="{{ $client->financials->accHolderName }}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Account No</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="accNumber"
-                                            value="{{ $client->financials->accNumber }}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Bank Name</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="bankName"
-                                            value="{{ $client->financials->bankName }}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Branch Name</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="branch"
-                                            value="{{ $client->financials->branch }}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:30%;">Branch Code</td>
-                                    <td>
-                                        <input class="form-control" type="text" name="branchCode"
-                                            value="{{ $client->financials->branchCode }}">
-                                    </td>
-                                </tr>
-
-                            </tbody>
-                        </table>
-                        <div class="col-md-4 mt-2">
-                            <button type="submit" class="btn btn-primary form-control">
-                                Update Now
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <!-- Financial Information card end -->
-
-
     </div>
 </div>
+<!-- sales overview end -->
 @endsection
+@push('customJs')
+<script>
+        function addFileInput() {
+            // Get the file inputs container
+            const fileInputs = document.getElementById('fileInputs');
+            
+            // Create a new input group div
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'input-group mb-2';
+            
+            // Create a new file input
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.name = 'docs[]';
+            fileInput.className = 'form-control';
+            fileInput.onchange = addFileInput;
+            
+            // Append the new file input to the input group div
+            inputGroup.appendChild(fileInput);
+            
+            // Append the input group div to the file inputs container
+            fileInputs.appendChild(inputGroup);
+        }
+    </script>

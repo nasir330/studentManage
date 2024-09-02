@@ -34,6 +34,7 @@
                                                 <div class="input-group mb-2">
                                                     <input type="text" name="firstName" class="form-control"
                                                         placeholder="Enter First Name" required>
+                                                    <input type="hidden" name="userType" value="{{$userTypes->id}}">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -100,15 +101,10 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="userType" class="mb-0">User Type</label>
+                                                <label for="password" class="mb-0">Password</label>
                                                 <div class="input-group mb-2">
-                                                    <select name="userType" class="form-select form-control" required>
-                                                        @foreach ($userTypes as $key => $userType)
-                                                        <option value="{{ $userType->id }}" selected>
-                                                            {{ $userType->type }}
-                                                        </option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input type="password" name="password" class="form-control"
+                                                        placeholder="Enter password">
                                                 </div>
                                             </div>
                                         </div>

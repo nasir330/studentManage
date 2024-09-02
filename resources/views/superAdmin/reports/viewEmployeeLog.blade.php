@@ -30,31 +30,30 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Employee Id</th>
-                                <th>Employee Name</th>
-                                <th>Activity</th>
+                                <th>Edited ID</th>
+                                <th>Description</th>
                                 <th>Time</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
-                                @foreach($activityLog as $key => $logs)                               
-                                <tr>
-                                    <td>{{$key + 1}}</td>                                   
-                                    <td>{{$logs->userId}}</td>                                   
-                                    <td>{{$logs->employees->firstName}} {{$logs->employees->lastName}}</td>                                   
-                                    <td>
-                                        {{$logs->activity}}
-                                       @if(!empty($logs->employeeLog))
-                                        <a href="{{route('admin.report.viewEmployeeLog', ['id' => $logs->id])}}">view</a>
+
+                            @foreach($activityLogDetails as $key => $logs)
+                            <tr>
+                                <td>{{$key + 1}}</td>
+                                <td>{{$logs->userId}}</td>
+                                <td>
+                                    <ul>
+                                        @foreach([ 'firstName' => 'First Name', 'lastName' => 'Last Name', 'gender' => 'Gender', 'dob' => 'Date of Birth', 'phone1' => 'Phone'] as $field => $label)
+                                        @if(!empty($logs->$field))
+                                        <li style="list-style:none;">{{ $label }}: {{ $field == 'created_at' || $field == 'updated_at' ? $logs->$field->format('d-m-y H:i:s') : $logs->$field }}</li>
                                         @endif
-                                        @if(!empty($logs->studentLog))
-                                        <a href="{{route('admin.report.viewStudentLog', ['id' => $logs->id])}}">view</a>
-                                        @endif
-                                    </td>                                   
-                                    <td>{{ $logs->created_at->format('d-m-y H:i:s') }}                                
-                                </tr>
-                                @endforeach
+                                        @endforeach
+                                    </ul>
+                                </td>
+                                <td>{{ $logs->created_at->format('d-m-y H:i:s') }}</td>
+                            </tr>
+                            @endforeach
+
                         </tbody>
                     </table>
                 </div>

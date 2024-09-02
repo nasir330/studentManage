@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title','Employee Management System')</title>
+    <title>@yield('title', 'Employee Management System')</title>
 
     <!-- bootstrap cdn CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -15,13 +15,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <!-- flag icon css cdn -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
-     <!-- jQuery CDN-->
-     <script src="https://code.jquery.com/jquery-3.6.3.js"
-                integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous">
-            </script>
-        <!-- Google chart CDN -->
+    <!-- flag icon css cdn -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <!-- jQuery CDN-->
+    <script src="https://code.jquery.com/jquery-3.6.3.js"
+        integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous">
+        </script>
+    <!-- Google chart CDN -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     <!-- Plugins css -->
@@ -42,21 +42,21 @@
     <div id="main_content">
         <!-- App Left-side-menu start -->
         @if (Auth::user()->userType == 3)
-        @include('includes.menu.app_menu_employee')
+            @include('includes.menu.app_menu_employee')
         @elseif (Auth::user()->userType == 4)
-        @include('includes.menu.app_menu_client')
+            @include('includes.menu.app_menu_client')
         @else
-        @include('includes.menu.app_menu')
+            @include('includes.menu.app_menu')
         @endif
         <!-- App Left-side-menu end -->
 
         <div class="page">
             <!-- top nav start -->
-          @include('includes.nav.superadmin_nav_menu')
-           
+            @include('includes.nav.superadmin_nav_menu')
+
             <!-- top nav end -->
             <div class="section-body mt-3">
-                <div class="container-fluid">                   
+                <div class="container-fluid">
                     @yield('content')
 
                     <div class="section-body">
@@ -71,13 +71,13 @@
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
                 integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
                 crossorigin="anonymous">
-            </script>
+                </script>
             <!-- FontAwsome JS CDN -->
             <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
                 integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow=="
                 crossorigin="anonymous" referrerpolicy="no-referrer">
-            </script>
-           
+                </script>
+
 
 
             <!-- Vendor js -->
@@ -91,24 +91,24 @@
             <script src="{{asset('Assets/js/ajaxQuery.js')}}"></script>
 
             <script>
-            $(document).ready(function() {
-                //success message autohide
-                setTimeout(function() {
-                    $(".errorMsg").fadeOut('slow')
-                }, 2000);
+                $(document).ready(function () {
+                    //success message autohide
+                    setTimeout(function () {
+                        $(".errorMsg").fadeOut('slow')
+                    }, 2000);
 
-                 // Handle country code selection
-  $(".dropdown-item").click(function() {
-    var countryCode = $(this).data("code");
-    var countryFlag = $(this).data("flag");
+                    // Handle country code selection
+                    $(".dropdown-item").click(function () {
+                        var countryCode = $(this).data("code");
+                        var countryFlag = $(this).data("flag");
 
-    // Update phone code display
-    $("#phoneCode").text(countryCode);
+                        // Update phone code display
+                        $("#phoneCode").text(countryCode);
 
-    // Update flag icon
-    $("#countryDropdown").find("span").removeClass().addClass("flag-icon flag-icon-" + countryFlag);
-  });
-            });
+                        // Update flag icon
+                        $("#countryDropdown").find("span").removeClass().addClass("flag-icon flag-icon-" + countryFlag);
+                    });
+                });
             </script>
             @yield('customJs')
 </body>

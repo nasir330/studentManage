@@ -13,4 +13,12 @@ class ActivityLog extends Model
     public function employees(){
         return $this->belongsTo(Employees::class,'userId');
     }
+    //table relation with employee update fields
+    public function employeeLog() {
+        return $this->hasOne(EmployeeUpdateFields::class, 'logId', 'id');
+    }
+    //table relation with student update fields
+    public function studentLog() {
+        return $this->hasOne(StudentsUpdateFields::class, 'logId', 'id');
+    }
 }
