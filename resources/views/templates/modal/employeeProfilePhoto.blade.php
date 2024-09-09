@@ -8,7 +8,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                <input type="hidden" name="userId" value="{{Auth::user()->id}}">
+                <input type="hidden" name="userId" value="{{$employee->employees->userId}}">
                     <input type="file" name="photo" class="form-control" required>
                 </div>
                 <div class="modal-footer">

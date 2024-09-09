@@ -26,11 +26,10 @@
             <div class="card-body">
                 <!-- on-progress work table start -->
                 <div class="col-md-12">
-                    <table class="table table-hover table-striped text-nowrap mb-0">
+                    <table class="table table-hover table-striped text-nowrap mb-1">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Employee Id</th>
+                                <th>#</th>                                
                                 <th>Employee Name</th>
                                 <th>Activity</th>
                                 <th>Time</th>
@@ -40,8 +39,7 @@
                             
                                 @foreach($activityLog as $key => $logs)                               
                                 <tr>
-                                    <td>{{$key + 1}}</td>                                   
-                                    <td>{{$logs->userId}}</td>                                   
+                                    <td>{{$key + 1}}</td>         
                                     <td>{{$logs->employees->firstName}} {{$logs->employees->lastName}}</td>                                   
                                     <td>
                                         {{$logs->activity}}
@@ -57,6 +55,7 @@
                                 @endforeach
                         </tbody>
                     </table>
+                    <span>{{$activityLog->links()}}</span>
                 </div>
                 <!-- on-progress work table end -->
 

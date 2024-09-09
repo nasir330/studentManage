@@ -12,8 +12,10 @@ class Department extends Model
     protected $fillable = [
         'department',
     ];
-//table relation with designation
-    public function designations() {
+    
+    //table relation with designation
+    public function designations()
+    {
         return $this->hasOne(Designation::class, 'departmentId', 'id');
     }
 }

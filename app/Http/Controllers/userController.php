@@ -183,7 +183,7 @@ class userController extends Controller
          'status' => $request->status,
          'shift' => $request->shift,
          'hiringManager' => $request->hiringManager,
-         'photo' => $photo_path,         
+         'photo' => $photo_path,
          'salaryType' => $request->salaryType,
          'payScale' => $request->payScale,
       ]);
@@ -222,7 +222,6 @@ class userController extends Controller
       // Flash a success message and redirect back
       session()->flash('success', 'Employee created successfully..!!');
       return redirect()->back();
-
    }
    //view employees profile
    public function viewEmployee($id)
@@ -259,10 +258,16 @@ class userController extends Controller
       Employees::where('userId', $request->userId)->update([
          'photo' => $photo_path,
       ]);
+      // Save log data
+      $authEmployee = Auth::user()->employees;
+      $logData = ActivityLog::create([
+         'userId' => Auth::user()->id,
+         'activity' => "{$authEmployee->firstName} {$authEmployee->lastName} has updated Profile Photo of employee id: {$request->id}",
+      ]);
       session()->flash('success', 'Photo updated successfully..!!');
       return redirect()->back();
    }
-  // Employees infoUpdate
+   // Employees infoUpdate
    public function infoUpdateEmployee(Request $request)
    {
       // Fetch the current employee data from the database
@@ -284,7 +289,7 @@ class userController extends Controller
       // Loop through each field and compare values
       foreach ($fieldsToCheck as $field) {
          if ($currentEmployee->$field !== $request->$field) {
-               $updatedFields[$field] = $request->$field;
+            $updatedFields[$field] = $request->$field;
          }
       }
 
@@ -292,8 +297,8 @@ class userController extends Controller
       if (count($updatedFields) > 1) {  // Check if there are fields other than userId
          $updateEmployees = $currentEmployee->update($updatedFields);
          if ($updateEmployees) {
-               $updatedFields['logId'] = $logData->id;
-               EmployeeUpdateFields::create($updatedFields);
+            $updatedFields['logId'] = $logData->id;
+            EmployeeUpdateFields::create($updatedFields);
          }
       }
 
@@ -357,18 +362,18 @@ class userController extends Controller
       $photo_storage = $photo->storeAs("public/uploads", $photo_name);
       $photo_path = 'storage/uploads/' . $photo_name;
 
-            // Store document paths
-            $document_paths = [];
-            if ($request->hasFile('docs')) {
-               foreach ($request->file('docs') as $doc) {
-                  $doc_name = $doc->getClientOriginalName();
-                  $doc_storage = $doc->storeAs("public/uploads/documents", $doc_name);
-                  $doc_path = 'storage/uploads/documents/' . $doc_name;
-                  $document_paths[] = $doc_path;
-               }
-            }
-            // Convert document paths array to JSON
-            $documents_json = json_encode($document_paths);
+      // Store document paths
+      $document_paths = [];
+      if ($request->hasFile('docs')) {
+         foreach ($request->file('docs') as $doc) {
+            $doc_name = $doc->getClientOriginalName();
+            $doc_storage = $doc->storeAs("public/uploads/documents", $doc_name);
+            $doc_path = 'storage/uploads/documents/' . $doc_name;
+            $document_paths[] = $doc_path;
+         }
+      }
+      // Convert document paths array to JSON
+      $documents_json = json_encode($document_paths);
       // store  user data
       $user = User::create([
          'userType' => $request->userType,
@@ -464,60 +469,108 @@ class userController extends Controller
       $student = User::find($id);
       return view('superAdmin.students.view', ['student' => $student]);
    }
-    //edit Student profile
-    public function editStudent($id)
-    {
-      $student = User::find($id);     
-      return view('superAdmin.students.edit', ['student' => $student]);
-       
-    }
-    //Student infoUpdate
-    public function infoUpdateStudent(Request $request)
-    {
-       //return $request->all();
- 
-       // Fetch the current student record from the database
+   //edit Student profile
+   public function editStudent($id)
+   {
+      $student = User::find($id);
+      $countries = CountryList::all();
+      $employees = Employees::whereNot('id', 1)->get();
+      return view('superAdmin.students.edit', ['student' => $student,'countries' => $countries, 'employees' => $employees]);
+   }
+      //Student photoUpdate
+      public function photoUpdateStudent(Request $request)
+      {      
+         $url = "storage/";
+         $photo = $request->file('photo');
+         $photo_name = $photo->getClientOriginalName();
+         $photo_storage = $photo->storeAs("public/uploads", $photo_name);
+         $photo_path = 'storage/uploads/' . $photo_name;
+   
+         Student::where('userId', $request->userId)->update([
+            'photo' => $photo_path,
+         ]);
+           // Save log data
+           $authEmployee = Auth::user()->employees;
+           $logData = ActivityLog::create([
+              'userId' => Auth::user()->id,
+              'activity' => "{$authEmployee->firstName} {$authEmployee->lastName} has updated Profile Photo of student id: {$request->id}",
+           ]);
+         session()->flash('success', 'Photo updated successfully..!!');
+         return redirect()->back();
+      }
+   //Student infoUpdate
+   public function infoUpdateStudent(Request $request)
+   {
+      //return $request->all();
+
+      // Fetch the current student record from the database
       $currentStudent = Student::where('userId', $request->id)->first();
-     
-       // save log data
-       $authEmployee = Auth::user()->employees;
-       $logData = ActivityLog::create([
-          'userId' => Auth::user()->id,
-          'activity' => $authEmployee->firstName . ' ' . $authEmployee->lastName . ' has updated Student id : ' . $request->id,
-       ]);
+
+      // save log data
+      $authEmployee = Auth::user()->employees;
+      $logData = ActivityLog::create([
+         'userId' => Auth::user()->id,
+         'activity' => $authEmployee->firstName . ' ' . $authEmployee->lastName . ' has updated Student id : ' . $request->id,
+      ]);
 
       // List of fields to compare and update
       $fieldsToCheck = [
-         'firstName', 'lastName', 'fathersName', 'mothersName', 'gender', 'dob',
-         'phone', 'gurdianPhone', 'country', 'councilorComments', 'managerComment',
-         'academicQualification', 'epGroup', 'epScore', 'workExperience', 'paymentMethods',
-         'payAmount', 'paymentDescription', 'leadSource', 'accHolderName', 'accNumber',
-         'bankName', 'branch', 'branchCode', 'joinDate', 'leavingDate', 'currentDate',
-         'remindDate', 'followupFor', 'assignedTo', 'status', 'weightage'
+         'firstName',
+         'lastName',
+         'fathersName',
+         'mothersName',
+         'gender',
+         'dob',
+         'phone',
+         'gurdianPhone',
+         'country',
+         'councilorComments',
+         'managerComment',
+         'academicQualification',
+         'epGroup',
+         'epScore',
+         'workExperience',
+         'paymentMethods',
+         'payAmount',
+         'paymentDescription',
+         'leadSource',
+         'accHolderName',
+         'accNumber',
+         'bankName',
+         'branch',
+         'branchCode',
+         'joinDate',
+         'leavingDate',
+         'currentDate',
+         'remindDate',
+         'followupFor',
+         'assignedTo',
+         'status',
+         'weightage'
       ];
 
-// Array to hold updated fields
-$updatedFields = ['userId' => $request->id];
+      // Array to hold updated fields
+      $updatedFields = ['userId' => $request->id];
 
-// Loop through each field and compare values
-foreach ($fieldsToCheck as $field) {
-    if ($currentStudent->$field !== $request->$field) {
-        $updatedFields[$field] = $request->$field;
-    }
-}
+      // Loop through each field and compare values
+      foreach ($fieldsToCheck as $field) {
+         if ($currentStudent->$field !== $request->$field) {
+            $updatedFields[$field] = $request->$field;
+         }
+      }
 
-   // Update the student record if there are any changes
-   if (count($updatedFields) > 1) {  // Check if there are fields other than userId
-      $updateStudents = $currentStudent->update($updatedFields);
-      if ($updateStudents) {
+      // Update the student record if there are any changes
+      if (count($updatedFields) > 1) {  // Check if there are fields other than userId
+         $updateStudents = $currentStudent->update($updatedFields);
+         if ($updateStudents) {
             $updatedFields['logId'] = $logData->id;
             StudentsUpdateFields::create($updatedFields);
+         }
       }
+
+      session()->flash('success', 'Employee Info updated successfully..!!');
+      return redirect()->back();
    }
-       
-       session()->flash('success', 'Employee Info updated successfully..!!');
-       return redirect()->back();
-    }
 
 
 

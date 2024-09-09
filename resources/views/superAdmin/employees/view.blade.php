@@ -14,10 +14,10 @@
                </span>
             </div>
             <div class="card-body">
-                <div id="employeePhoto" class="text-center">
+                <div id="employeePhoto" class="text-center mb-2">
                     <img src="{{asset('')}}{{$employee->employees->photo}}" class="img-fluid" alt="User Image">
                 </div>
-                <h4 class="text-center mt-2">
+                <!-- <h4 class="text-center mt-2">
                     @if(!empty($employee->employees->departments))
                     {{$employee->employees->departments->department}} <br>
                     <span style="font-size:16px;">
@@ -30,7 +30,7 @@
                     </span>
                     @endif
                     
-                </h4>
+                </h4> -->
                 <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist"
                     aria-orientation="vertical">
                     <a class="nav-link active" id="personalInfo" data-toggle="pill" href="#tab-personalInfo" role="tab"
@@ -64,11 +64,7 @@
                                 <td style="width:30%;">Last Name</td>
                                 <td>{{$employee->employees->lastName}}
                                 </td>
-                            </tr>
-                            <tr>
-                                <td style="width:30%;">Fathers Name</td>
-                                <td>{{$employee->employees->fathersName}}</td>
-                            </tr>
+                            </tr>                           
                             <tr>
                                 <td style="width:30%;">Gender</td>
                                 <td>{{$employee->employees->gender}}</td>
@@ -79,35 +75,9 @@
                             </tr>
                             <tr>
                                 <td style="width:30%;">Contact No</td>
-                                <td>{{$employee->employees->phone}}
+                                <td>{{$employee->employees->phone1}}
                                 </td>
-                            </tr>
-                            <tr>
-                                <td style="width:30%;">Present Address</td>
-                                <td style="white-space: pre-line">
-                                    {{$employee->employees->presentAddress}}</td>
-                            </tr>
-                            <tr>
-                                <td style="width:30%;">Permanent Address</td>
-                                <td style="white-space: pre-line">
-                                    {{$employee->employees->permanentAddress}}</td>
-                            </tr>
-                            <tr>
-                                <td style="width:30%;">Reference by</td>
-                                <td>{{$employee->employees->referenceName}}</td>
-                            </tr>
-                            <tr>
-                                <td style="width:30%;">Reference Contact</td>
-                                <td>{{$employee->employees->referencePhone}}</td>
-                            </tr>
-                            <tr>
-                                <td style="width:30%;">Identity Type</td>
-                                <td>{{$employee->employees->govId}}</td>
-                            </tr>
-                            <tr>
-                                <td style="width:30%;">Identity No</td>
-                                <td>{{$employee->employees->govIdNo}}</td>
-                            </tr>
+                            </tr>                          
                         </tbody>
                     </table>
                 </div>
@@ -120,7 +90,7 @@
             <div class="card-header">
                 {{'Company Information'}}
             </div>
-            <div class="card-body">
+            <!-- <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered text-nowrap mb-0">
                         <tbody>
@@ -170,7 +140,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> -->
         </div>
         <!-- Company Information card end -->
 
@@ -180,7 +150,7 @@
             <div class="card-header">
                 {{'Financial Information'}}
             </div>
-            <div class="card-body">
+            <!-- <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered text-nowrap mb-0">
                         <tbody>
@@ -240,7 +210,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
     <!-- Financial Information card end -->

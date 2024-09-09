@@ -3,6 +3,11 @@
 
 @section('content')
 <div class="row clearfix row-deck">
+@if(session()->has('success'))
+    <div id="successMessage" class="text-center text-success p-2 ml-3">
+        <span style="color:green;">{{session('success')}}</span>
+    </div>
+    @endif
     <div class="col-md-4">
         <div class="card">
             <div class="card-header d-flex justify-content-center">
@@ -11,9 +16,17 @@
                 </span>
             </div>
             <div class="card-body">
-                <div id="clientPhoto" class="text-center">
+                <!-- Profile Photo section start -->
+                <div id="employeePhoto" class="text-center mb-2">
                     <img src="{{asset('')}}{{$student->students->photo}}" class="img-fluid" alt="User Image">
+                    <div class="photo-edit-btn">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#photoEdit">
+                            <i class="icon fa-solid fa-camera"></i>
+                        </a>
+                    </div>
                 </div>
+                <!-- Profile Photo section end -->   
+               
                 <h4 class="text-center mt-2">
                     {{$student->students->firstName . ' ' . $student->students->lastName}}
 
@@ -177,4 +190,5 @@
     </div>
     <!-- Financial Information card end -->
 </div>
+@include('templates.modal.studentsProfilePhoto')
 @endsection

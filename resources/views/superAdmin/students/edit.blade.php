@@ -64,7 +64,7 @@
                                             <div class="input-group mb-2">
                                                 <select name="gender" class="form-select form-control">
                                                     <option value="">--Select Gender--</option>
-                                                    <option value="{{$student->students->firstName}}" selected>{{$student->students->gender}}</option>
+                                                    <option value="{{$student->students->gender}}" selected>{{$student->students->gender}}</option>
                                                     <option value="Male">Male</option>
                                                     <option value="Female">Female</option>
                                                 </select>
@@ -107,9 +107,14 @@
                                             <div class="input-group mb-2">
                                                 <select name="country" class="form-select form-control">
                                                     <option value="">--Select Country--</option>
-                                                    <option value="{{$student->students->firstName}}" selected>
-                                                    {{$student->students->country}}
+                                                    <option value="{{$student->students->country}}" selected>
+                                                        {{$student->students->countryList->countryName}}
                                                     </option>
+                                                    @foreach ($countries as $key => $country)
+                                                    <option value="{{ $country->id }}">
+                                                        {{ $country->countryName }}
+                                                    </option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -129,8 +134,8 @@
                                                     class="form-control">{{$student->students->managerComment}}</textarea>
                                             </div>
                                         </div>
-                                    </div>                                    
-                                    
+                                    </div>
+
                                 </div>
                             </div>
                             <!-- Personal info end -->
@@ -158,7 +163,7 @@
                                                 <select id="epGroup" name="epGroup" class="form-select form-control"
                                                     required>
                                                     <option value="">--Select Item--</option>
-                                                    <option value="{{$student->students->egGroup}}" selected>{{$student->students->egGroup}}</option>
+                                                    <option value="{{$student->students->epGroup}}" selected>{{$student->students->epGroup}}</option>
                                                     <option value="IELTS">IELTS</option>
                                                     <option value="PTE">PTE</option>
                                                     <option value="PTE">OIETC</option>
@@ -210,9 +215,9 @@
                                                 <select name="paymentMethods" class="form-select form-control">
                                                     <option value="">--Select Methods--</option>
                                                     <option value="{{$student->students->paymentMethods}}" selected>{{$student->students->paymentMethods}}</option>
-                                                    <option value="Monthly">Bank</option>
-                                                    <option value="Weekly">VISA/MASTER CARD</option>
-                                                    <option value="Daily">Cash</option>
+                                                    <option value="Bank">Bank</option>
+                                                    <option value="VISA/MASTER CARD">VISA/MASTER CARD</option>
+                                                    <option value="Cash">Cash</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -336,8 +341,13 @@
                                                 <select name="assignedTo" class="form-select form-control" required>
                                                     <option value="">--Select Councilor's--</option>
                                                     <option value="{{$student->students->assignedTo}}" selected>
-                                                    {{$student->students->assignedTo}}
+                                                        {{$student->students->employees->firstName}} {{$student->students->employees->lastName}}
                                                     </option>
+                                                    @foreach ($employees as $key=> $employee )
+                                                    <option value="{{$employee->id}}">
+                                                        {{$employee->firstName}}{{$employee->lastName}}
+                                                    </option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -391,25 +401,25 @@
 @endsection
 @push('customJs')
 <script>
-        function addFileInput() {
-            // Get the file inputs container
-            const fileInputs = document.getElementById('fileInputs');
-            
-            // Create a new input group div
-            const inputGroup = document.createElement('div');
-            inputGroup.className = 'input-group mb-2';
-            
-            // Create a new file input
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.name = 'docs[]';
-            fileInput.className = 'form-control';
-            fileInput.onchange = addFileInput;
-            
-            // Append the new file input to the input group div
-            inputGroup.appendChild(fileInput);
-            
-            // Append the input group div to the file inputs container
-            fileInputs.appendChild(inputGroup);
-        }
-    </script>
+    function addFileInput() {
+        // Get the file inputs container
+        const fileInputs = document.getElementById('fileInputs');
+
+        // Create a new input group div
+        const inputGroup = document.createElement('div');
+        inputGroup.className = 'input-group mb-2';
+
+        // Create a new file input
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.name = 'docs[]';
+        fileInput.className = 'form-control';
+        fileInput.onchange = addFileInput;
+
+        // Append the new file input to the input group div
+        inputGroup.appendChild(fileInput);
+
+        // Append the input group div to the file inputs container
+        fileInputs.appendChild(inputGroup);
+    }
+</script>

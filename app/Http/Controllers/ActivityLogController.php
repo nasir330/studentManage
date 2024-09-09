@@ -22,7 +22,7 @@ class ActivityLogController extends Controller
     }
 
     public function index(){
-        $activityLog = ActivityLog::all();
+        $activityLog = ActivityLog::orderBy('id','asc')->paginate('20');
         return view('superAdmin.reports.index',['activityLog' => $activityLog]);
             
     }

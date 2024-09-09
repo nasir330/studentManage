@@ -14,7 +14,8 @@
                 {{$employee->employees->firstName.' '.$employee->employees->lastName}}
             </div>
             <div class="card-body">
-                <div id="employeePhoto" class="text-center">
+                <!-- Profile Photo section start -->
+                <div id="employeePhoto" class="text-center mb-2">
                     <img src="{{asset('')}}{{$employee->employees->photo}}" class="img-fluid" alt="User Image">
                     <div class="photo-edit-btn">
                         <a href="#" data-bs-toggle="modal" data-bs-target="#photoEdit">
@@ -22,7 +23,8 @@
                         </a>
                     </div>
                 </div>
-                <h4 class="text-center mt-2">
+                <!-- Profile Photo section end -->             
+                <!-- <h4 class="text-center mt-2">
                     @if(!empty($employee->employees->departments))
                     {{$employee->employees->departments->department}} <br>
                     <span style="font-size:16px;">
@@ -35,7 +37,7 @@
                     </span>
                     @endif
 
-                </h4>
+                </h4> -->
                 <div class="nav flex-column nav-tabs h-100" id="vert-tabs-tab" role="tablist"
                     aria-orientation="vertical">
                     <a class="nav-link active" id="personalInfo" data-toggle="pill" href="#tab-personalInfo" role="tab"
@@ -122,7 +124,7 @@
             <div class="card-header">
                 {{'Company Information'}}
             </div>
-            <div class="card-body">
+            <!-- <div class="card-body">
                 <div class="table-responsive">
                     <form action="{{route('admin.companyInfoUpdate.employee')}}" method="post">
                         @csrf
@@ -224,7 +226,7 @@
                         </div>
                     </form>
                 </div>
-            </div>
+            </div> -->
         </div>
         <!-- Company Information card end -->
 
@@ -234,7 +236,7 @@
             <div class="card-header">
                 {{ 'Financial Information' }}
             </div>
-            <div class="card-body">
+            <!-- <div class="card-body">
                 <div class="table-responsive">
                     <form action="{{route('admin.financialInfoUpdate.employee')}}" method="post">
                         @csrf
@@ -310,11 +312,12 @@
                         </div>
                     </form>
                 </div>
-            </div>
+            </div> -->
         </div>
         <!-- Financial Information card end -->
 
 
     </div>
 </div>
+@include('templates.modal.employeeProfilePhoto')
 @endsection

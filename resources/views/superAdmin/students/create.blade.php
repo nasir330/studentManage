@@ -154,7 +154,7 @@
                                                     <input type="file" name="docs[]" class="form-control"
                                                         onchange="addFileInput()">
                                                 </div>
-                                            </div>                                           
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -235,9 +235,9 @@
                                             <div class="input-group mb-2">
                                                 <select name="paymentMethods" class="form-select form-control" required>
                                                     <option value="">--Select Methods--</option>
-                                                    <option value="Monthly">Bank</option>
-                                                    <option value="Weekly">VISA/MASTER CARD</option>
-                                                    <option value="Daily">Cash</option>
+                                                    <option value="Bank">Bank</option>
+                                                    <option value="VISA/MASTER CARD">VISA/MASTER CARD</option>
+                                                    <option value="Cash">Cash</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -367,8 +367,9 @@
                                                     <option value="">--Select Councilor's--</option>
 
                                                     @foreach ($employees as $key=> $employee )
-                                                    <option value="$employee->id">{{$employee->firstName}}
-                                                        {{$employee->lastName}}</option>
+                                                    <option value="{{$employee->id}}">
+                                                        {{$employee->firstName}}{{$employee->lastName}}
+                                                    </option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -422,25 +423,25 @@
 @endsection
 @push('customJs')
 <script>
-        function addFileInput() {
-            // Get the file inputs container
-            const fileInputs = document.getElementById('fileInputs');
-            
-            // Create a new input group div
-            const inputGroup = document.createElement('div');
-            inputGroup.className = 'input-group mb-2';
-            
-            // Create a new file input
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.name = 'docs[]';
-            fileInput.className = 'form-control';
-            fileInput.onchange = addFileInput;
-            
-            // Append the new file input to the input group div
-            inputGroup.appendChild(fileInput);
-            
-            // Append the input group div to the file inputs container
-            fileInputs.appendChild(inputGroup);
-        }
-    </script>
+    function addFileInput() {
+        // Get the file inputs container
+        const fileInputs = document.getElementById('fileInputs');
+
+        // Create a new input group div
+        const inputGroup = document.createElement('div');
+        inputGroup.className = 'input-group mb-2';
+
+        // Create a new file input
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.name = 'docs[]';
+        fileInput.className = 'form-control';
+        fileInput.onchange = addFileInput;
+
+        // Append the new file input to the input group div
+        inputGroup.appendChild(fileInput);
+
+        // Append the input group div to the file inputs container
+        fileInputs.appendChild(inputGroup);
+    }
+</script>

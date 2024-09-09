@@ -180,7 +180,7 @@
                 </ul>
             </li> -->
 
-            <li>
+            <!-- <li>
                 <a href="javascript:void(0)" class="has-arrow arrow-c">
                     <i class="fa-solid fa-gear"></i>
                     <span>Settings</span>
@@ -229,7 +229,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> -->
 
             <!-- <li>
                 <a href="javascript:void(0)">
