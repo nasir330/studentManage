@@ -56,6 +56,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/student-list', [userController::class, 'studentist'])->name('admin.student.list');
     Route::get('/student-view/{id}',[UserController::class,'viewStudent'])->name('admin.view.student');
     Route::get('/student-edit/{id}',[UserController::class,'editStudent'])->name('admin.edit.student');
+    Route::post('/student-photo-update',[UserController::class,'photoUpdateStudent'])->name('admin.photoUpdate.student');
     Route::post('/student-info-update',[UserController::class,'infoUpdateStudent'])->name('admin.infoUpdate.student');
     // Route::get('/client-list', [userController::class, 'clientList'])->name('admin.client.list');
     // Route::get('/export-users',[userController::class, 'exportUser'])->name('exportUser');
