@@ -10,6 +10,12 @@ class Student extends Model
   use HasFactory;
   protected $guarded = [];
 
+  //table relation with users
+  public function toUsers()
+  {
+    return $this->belongsTo(User::class, 'userId', 'id');
+  }
+
   //table relation with country
   public function countryList()
   {

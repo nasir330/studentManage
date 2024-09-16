@@ -10,6 +10,11 @@ class Employees extends Model
     use HasFactory;
     protected $guarded = [];
 
+     //table relation with students
+     public function toStudents() {
+        return $this->hasMany(Student::class, 'assignedTo', 'userId');
+    }
+
     //table relation with Department
     public function departments()
     {

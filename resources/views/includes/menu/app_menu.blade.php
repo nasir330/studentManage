@@ -78,7 +78,7 @@
                 </ul>
             </li>
             @endif
-         
+     
             <li>
                 <a href="javascript:void(0)" class="has-arrow arrow-c">
                     <i class="fa-solid fa-clipboard-user"></i>
@@ -86,9 +86,9 @@
                 </a>
                 <ul>
                     <li>
-                        <a href="{{route('projects')}}">
+                        <a href="{{route('admin.projects')}}">
                             <i class="fa-solid fa-user-check"></i>
-                            Create Project
+                            Project List
                         </a>
                     </li>
                     <!-- <li>

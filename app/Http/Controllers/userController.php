@@ -239,10 +239,8 @@ class userController extends Controller
    }
    //delete employees profile
    public function deleteEmployee($id)
-   {
-      User::destroy($id);
-      Employees::destroy($id);
-      Financial::destroy($id);
+   {     
+      User::destroy($id);     
       session()->flash('delete', 'Account Deleted ..!!');
       return redirect()->back();
    }
@@ -460,8 +458,16 @@ class userController extends Controller
    // Student List data
    public function studentist()
    {
-      $users = User::where('userType', 4)->get();
-      return view('superAdmin.students.index', ['users' => $users]);
+      $studentList = Student::orderBy('id','asc')->paginate('10');
+      $countries = CountryList::all();
+      return view('superAdmin.students.index', ['studentList' => $studentList, 'countries' => $countries]);
+   }
+   // Student search by country
+   public function studentSearchCountry(Request $request)
+   {      
+      $countryStudents = Student::where('country', $request->country)->paginate('10');
+      $countries = CountryList::all();
+      return view('superAdmin.students.countrySearch', ['countryStudents' => $countryStudents, 'countries' => $countries]);
    }
    //view Student profile
    public function viewStudent($id)
@@ -477,27 +483,27 @@ class userController extends Controller
       $employees = Employees::whereNot('id', 1)->get();
       return view('superAdmin.students.edit', ['student' => $student,'countries' => $countries, 'employees' => $employees]);
    }
-      //Student photoUpdate
-      public function photoUpdateStudent(Request $request)
-      {      
-         $url = "storage/";
-         $photo = $request->file('photo');
-         $photo_name = $photo->getClientOriginalName();
-         $photo_storage = $photo->storeAs("public/uploads", $photo_name);
-         $photo_path = 'storage/uploads/' . $photo_name;
+   //Student photoUpdate
+   public function photoUpdateStudent(Request $request)
+   {      
+      $url = "storage/";
+      $photo = $request->file('photo');
+      $photo_name = $photo->getClientOriginalName();
+      $photo_storage = $photo->storeAs("public/uploads", $photo_name);
+      $photo_path = 'storage/uploads/' . $photo_name;
    
-         Student::where('userId', $request->userId)->update([
-            'photo' => $photo_path,
-         ]);
-           // Save log data
-           $authEmployee = Auth::user()->employees;
-           $logData = ActivityLog::create([
-              'userId' => Auth::user()->id,
-              'activity' => "{$authEmployee->firstName} {$authEmployee->lastName} has updated Profile Photo of student id: {$request->id}",
-           ]);
-         session()->flash('success', 'Photo updated successfully..!!');
-         return redirect()->back();
-      }
+      Student::where('userId', $request->userId)->update([
+         'photo' => $photo_path,
+      ]);
+      // Save log data
+      $authEmployee = Auth::user()->employees;
+      $logData = ActivityLog::create([
+      'userId' => Auth::user()->id,
+      'activity' => "{$authEmployee->firstName} {$authEmployee->lastName} has updated Profile Photo of student id: {$request->id}",
+      ]);
+      session()->flash('success', 'Photo updated successfully..!!');
+      return redirect()->back();
+   }
    //Student infoUpdate
    public function infoUpdateStudent(Request $request)
    {
@@ -571,7 +577,13 @@ class userController extends Controller
       session()->flash('success', 'Employee Info updated successfully..!!');
       return redirect()->back();
    }
-
+  //delete Student profile
+  public function deleteStudent($id)
+  {
+     User::destroy($id);    
+     session()->flash('delete', 'Account Deleted ..!!');
+     return redirect()->back();
+  }
 
 
 

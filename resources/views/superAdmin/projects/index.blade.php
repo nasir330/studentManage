@@ -25,7 +25,7 @@
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-start mb-3">
-                    <form action="{{route('add.project')}}" method="POST">
+                    <form action="{{route('admin.add.project')}}" method="POST">
                         @csrf
                         <div class="row g-3 align-items-center">
                             <div class="col-md-6">
@@ -47,12 +47,13 @@
                                         </option>
                                         @endforeach
                                     </select>
+                                    <div class="group-text">
+                                <button class="btn btn-primary">Add</button>
+                            </div>
                                 </div>
                             </div>
 
-                            <div class="col-auto">
-                                <button class="btn btn-primary">Add</button>
-                            </div>
+                            
                         </div>
                     </form>
                 </div>
@@ -81,6 +82,12 @@
                                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                                             </a>
                                             <ul class="dropdown-menu">
+                                            <li class="dropdown-item">
+                                                    <a href="{{route('admin.view.project',['id'=>$project->id])}}">
+                                                        <i class="dropdown-icon fa fa-eye"></i>
+                                                        View Details
+                                                    </a>
+                                                </li>
                                                 <li class="dropdown-item">
                                                     <a href="{{route('edit.designations',['id'=>$project->id])}}">
                                                         <i class="dropdown-icon fa fa-edit"></i>
@@ -88,7 +95,7 @@
                                                     </a>
                                                 </li>
                                                 <li class="dropdown-item">
-                                                    <a href="#" onclick="deleteProject({{ $project->id }})" >
+                                                    <a href="#">
                                                         <i class="dropdown-icon fa fa-trash"></i>
                                                         Delete
                                                     </a>
@@ -129,7 +136,7 @@
                     },
                     success: function(response){
                         if(response["status"]){
-                            window.location.href="{{ route('projects') }}";
+                            window.location.href="{{ route('admin.projects') }}";
                         } 
                     }
                 });

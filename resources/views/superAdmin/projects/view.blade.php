@@ -1,5 +1,5 @@
 @extends('layouts.header')
-@section('title', 'Student List')
+@section('title', 'View Project Details')
 
 @section('content')
 
@@ -9,35 +9,8 @@
         <div class="card">
             <div class="card-header">
                 <div class="col-md-3 d-flex justify-content-start">
-                    <h3 class="card-title">Students List</h3>
+                    <h3 class="card-title">Counselor Name  {{$employee->firstName}} {{$employee->lastName}}</h3>
                 </div>
-                <div class="col-md-6 d-flex justify-content-center">
-                    @if (session()->has('delete'))
-                    <div id="deleteMessage" class="alert-danger">
-                        <span style="color:red;">{{ session('delete') }}</span>
-                    </div>
-                    @endif
-                </div>
-                <div class="col-md-3">                   
-                    <form action="{{route('admin.student.search.country')}}" method="POST">
-                        @csrf
-                    <div class="input-group p-0">
-                        <select name="country" class="form-select form-control" required>
-                            <option value="" disabled selected>Countries</option>
-                            @foreach ($countries as $key => $country)
-                            <option value="{{ $country->id }}">
-                                {{ $country->countryName }}
-                            </option>
-                            @endforeach
-                        </select>
-                        <div class="input-group-text">
-                        <button class="btn btn-primary"> <i class="fa-solid fa-magnifying-glass"></i></button>
-                        </div>
-                    </div>
-                   
-                    </form>
-                </div>
-
             </div>
             <div class="">
                 <div class="table-responsive">
@@ -55,8 +28,8 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                        @foreach ($studentList as $key => $students)
+                        <tbody>                           
+                            @foreach ($studentList as $key => $students)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>{{ $students->firstName . ' ' . $students->lastName }}</td>
@@ -98,8 +71,7 @@
                             </tr>
                             @endforeach
                         </tbody>
-                    </table>
-                    <span>{{$studentList->links()}}</span>
+                    </table>                   
                 </div>
             </div>
         </div>

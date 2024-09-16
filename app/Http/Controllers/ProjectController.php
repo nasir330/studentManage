@@ -29,6 +29,13 @@ class ProjectController extends Controller
         session()->flash('success', 'Project created successfully');
         return redirect()->back();
     }
+    public function viewProject($id)
+    {  
+        $projects = Project::find($id);        
+        $employee = $projects->employees;    
+        $studentList = $employee->toStudents;      
+        return view('superAdmin.projects.view',['projects'=>$projects,'employee'=>$employee,'studentList'=>$studentList]);
+    }
     //assing employee form
     public function assignEmployee()
     {
