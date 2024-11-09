@@ -9,13 +9,7 @@
                 {{ Auth::user()->clients->firstName.' '.Auth::user()->clients->lastName }}
                 @endif
             </h4>
-        </div>
-        <!-- <div class="col-auto d-flex justify-content-end">
-            <a href="javascript:void(0)" class="menu_option float-right">
-                <i style="font-size:22px;" class="fa-solid fa-bars" data-toggle="tooltip" data-placement="left"
-                    title="Grid & List Toggle"></i>
-            </a>
-        </div> -->
+        </div>      
     </div>
     <nav id="left-sidebar-nav" class="sidebar-nav">
         <ul class="metismenu">

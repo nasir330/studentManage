@@ -20,114 +20,26 @@
                     <span>Dashboard</span>
                 </a>
             </li>
-         
             <li>
                 <a href="javascript:void(0)" class="has-arrow arrow-c">
-                    <i class="fa-solid fa-clipboard-user"></i>
-                    <span>Current Project</span>
+                    <i class="fa-solid fa-users"></i>
+                    <span>Students</span>
                 </a>
-                <ul>
+                <ul>                   
                     <li>
-                        <a href="{{route('employee.projects',Auth::user()->id)}}">
+                        <a href="{{route('employee.add.student')}}">
                             <i class="fa-solid fa-user-check"></i>
-                            Start Work
+                            Add New
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('employee.work.logs')}}">
-                            <i class="fa-solid fa-file-lines"></i>
-                            Work Logs
+                        <a href="{{route('employee.student.list')}}">
+                            <i class="fa-solid fa-user-group"></i>
+                            Students List
                         </a>
                     </li>
                 </ul>
             </li>
-            <!-- <li>
-                <a href="javascript:void(0)" class="has-arrow arrow-c">
-                    <i class="fa-solid fa-clipboard-user"></i>
-                    <span>Attendance</span>
-                </a>
-                <ul>
-                    <li>
-                        <a href="login.html">
-                            <i class="fa-solid fa-user-check"></i>
-                            Daily Attendance
-                        </a>
-                    </li>
-                    <li>
-                        <a href="login.html">
-                            <i class="fa-solid fa-file-lines"></i>
-                            Attendance Report
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a href="javascript:void(0)" class="has-arrow arrow-c">
-                    <i class="fa-solid fa-bed"></i>
-                    <span>Leaves</span>
-                </a>
-                <ul>
-                    <li>
-                        <a href="login.html">
-                            <i class="fa-solid fa-plus"></i>
-                            Add Leaves
-                        </a>
-                    </li>
-                    <li>
-                        <a href="login.html">
-                            <i class="fa-solid fa-sliders"></i>
-                            Manage Leaves
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a href="javascript:void(0)" class="has-arrow arrow-c">
-                    <i class="fa-solid fa-coins"></i>
-                    <span>Payrolls</span>
-                </a>
-                <ul>
-                    <li>
-                        <a href="login.html">
-                            <i class="fa-solid fa-ticket"></i>
-                            Create Payslip
-                        </a>
-                    </li>
-                    <li>
-                        <a href="login.html">
-                            <i class="fa-solid fa-list"></i>
-                            Payslip List
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a href="javascript:void(0)" class="has-arrow arrow-c">
-                    <i class="fa-solid fa-flag"></i>
-                    <span>Holidays</span>
-                </a>
-                <ul>
-                    <li>
-                        <a href="login.html">
-                            <i class="fa-solid fa-plus"></i>
-                            Add Holiday
-                        </a>
-                    </li>
-                    <li>
-                        <a href="login.html">
-                            <i class="fa-solid fa-sliders"></i>
-                            Manage Holiday
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            
-            <li>
-                <a href="login.html">
-                    <i class="fa-solid fa-file-csv"></i>
-                    Activity Log
-                </a>
-            </li> -->
 
         </ul>
     </nav>

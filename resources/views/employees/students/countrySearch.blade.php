@@ -1,5 +1,5 @@
 @extends('layouts.header')
-@section('title', 'Student List')
+@section('title', 'Student List By Country')
 
 @section('content')
 
@@ -18,23 +18,28 @@
                     </div>
                     @endif
                 </div>
-                <div class="col-md-3">                   
+                <div class="col-md-3">
                     <form action="{{route('admin.student.search.country')}}" method="POST">
                         @csrf
-                    <div class="input-group p-0">
-                        <select name="country" class="form-select form-control" required>
-                            <option value="" disabled selected>Countries</option>
-                            @foreach ($countries as $key => $country)
-                            <option value="{{ $country->id }}">
-                                {{ $country->countryName }}
-                            </option>
-                            @endforeach
-                        </select>
-                        <div class="input-group-text">
-                        <button class="btn btn-primary"> <i class="fa-solid fa-magnifying-glass"></i></button>
+                        <div class="input-group p-0">
+                            <div class="input-group-text p-0 mx-0">
+                                <a href="{{route('admin.student.list')}}" class="btn btn-primary">
+                                <i class="fas fa-arrow-left"></i>
+                                </a>
+                            </div>
+                            <select name="country" class="form-select form-control" required>
+                                <option value="" disabled selected>Countries</option>
+                                @foreach ($countries as $key => $country)
+                                <option value="{{ $country->id }}">
+                                    {{ $country->countryName }}
+                                </option>
+                                @endforeach
+                            </select>
+                            <div class="input-group-text p-0 mx-0">
+                                <button class="btn btn-primary"> <i class="fa-solid fa-magnifying-glass"></i></button>
+                            </div>
                         </div>
-                    </div>
-                   
+
                     </form>
                 </div>
 
@@ -56,7 +61,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                        @foreach ($studentList as $key => $students)
+                            @foreach ($countryStudents as $key => $students)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td>{{ $students->firstName . ' ' . $students->lastName }}</td>
@@ -72,20 +77,20 @@
                                             </a>
                                             <ul class="dropdown-menu">
                                                 <li class="dropdown-item">
-                                                    <a href="{{ route('employee.view.student', ['id' => $students->userId]) }}">
+                                                    <a href="{{ route('admin.view.student', ['id' => $students->userId]) }}">
                                                         <i class="dropdown-icon fa fa-eye"></i>
                                                         View Details
                                                     </a>
                                                 </li>
                                                 <li class="dropdown-item">
-                                                    <a href="{{ route('employee.edit.student', ['id' => $students->userId]) }}">
+                                                    <a href="{{ route('admin.edit.student', ['id' => $students->userId]) }}">
                                                         <i class="dropdown-icon fa fa-edit"></i>
                                                         edit
                                                     </a>
                                                 </li>
                                                 <li class="dropdown-item">
                                                     <a
-                                                        href="{{ route('employee.delete.student', ['id' => $students->userId])}}">
+                                                        href="{{ route('admin.delete.employee', ['id' => $students->userId]) }}">
                                                         <i class="dropdown-icon fa fa-trash"></i>
                                                         Delete
                                                     </a>
@@ -99,7 +104,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <span>{{$studentList->links()}}</span>
+                    <span>{{$countryStudents->links()}}</span>
                 </div>
             </div>
         </div>

@@ -239,8 +239,8 @@ class userController extends Controller
    }
    //delete employees profile
    public function deleteEmployee($id)
-   {     
-      User::destroy($id);     
+   {
+      User::destroy($id);
       session()->flash('delete', 'Account Deleted ..!!');
       return redirect()->back();
    }
@@ -346,8 +346,24 @@ class userController extends Controller
       $userTypes = UserType::where('id', 4)->first();
       $countries = CountryList::all();
       $employees = Employees::whereNot('id', 1)->get();
-      return view('superAdmin.students.create', ['userTypes' => $userTypes, 'countries' => $countries, 'employees' => $employees]);
+
+      if (Auth::user()->userType == '1') {
+         return view('superAdmin.students.create', [
+            'userTypes' => $userTypes,
+            'countries' => $countries,
+            'employees' => $employees
+         ]);
+      } elseif (Auth::user()->userType == '3') {
+         return view('employees.students.create', [
+            'userTypes' => $userTypes,
+            'countries' => $countries,
+            'employees' => $employees
+         ]);
+      } else {
+         return "You have no permission to access this page";
+      }
    }
+
    //store Student data
    public function storeStudent(Request $request)
    {
@@ -458,13 +474,30 @@ class userController extends Controller
    // Student List data
    public function studentist()
    {
-      $studentList = Student::orderBy('id','asc')->paginate('10');
       $countries = CountryList::all();
-      return view('superAdmin.students.index', ['studentList' => $studentList, 'countries' => $countries]);
+
+      if (Auth::user()->userType == '1') {
+         $studentList = Student::orderBy('id', 'asc')->paginate(10);
+         return view('superAdmin.students.index', [
+            'studentList' => $studentList,
+            'countries' => $countries
+         ]);
+      } elseif (Auth::user()->userType == '3') {
+         $studentList = Student::where('assignedTo', Auth::user()->id)
+            ->orderBy('id', 'asc')
+            ->paginate(10);
+         return view('employees.students.index', [
+            'studentList' => $studentList,
+            'countries' => $countries
+         ]);
+      } else {
+         return "You have no permission to access this page";
+      }
    }
+
    // Student search by country
    public function studentSearchCountry(Request $request)
-   {      
+   {
       $countryStudents = Student::where('country', $request->country)->paginate('10');
       $countries = CountryList::all();
       return view('superAdmin.students.countrySearch', ['countryStudents' => $countryStudents, 'countries' => $countries]);
@@ -481,25 +514,25 @@ class userController extends Controller
       $student = User::find($id);
       $countries = CountryList::all();
       $employees = Employees::whereNot('id', 1)->get();
-      return view('superAdmin.students.edit', ['student' => $student,'countries' => $countries, 'employees' => $employees]);
+      return view('superAdmin.students.edit', ['student' => $student, 'countries' => $countries, 'employees' => $employees]);
    }
    //Student photoUpdate
    public function photoUpdateStudent(Request $request)
-   {      
+   {
       $url = "storage/";
       $photo = $request->file('photo');
       $photo_name = $photo->getClientOriginalName();
       $photo_storage = $photo->storeAs("public/uploads", $photo_name);
       $photo_path = 'storage/uploads/' . $photo_name;
-   
+
       Student::where('userId', $request->userId)->update([
          'photo' => $photo_path,
       ]);
       // Save log data
       $authEmployee = Auth::user()->employees;
       $logData = ActivityLog::create([
-      'userId' => Auth::user()->id,
-      'activity' => "{$authEmployee->firstName} {$authEmployee->lastName} has updated Profile Photo of student id: {$request->id}",
+         'userId' => Auth::user()->id,
+         'activity' => "{$authEmployee->firstName} {$authEmployee->lastName} has updated Profile Photo of student id: {$request->id}",
       ]);
       session()->flash('success', 'Photo updated successfully..!!');
       return redirect()->back();
@@ -577,13 +610,19 @@ class userController extends Controller
       session()->flash('success', 'Employee Info updated successfully..!!');
       return redirect()->back();
    }
-  //delete Student profile
-  public function deleteStudent($id)
-  {
-     User::destroy($id);    
-     session()->flash('delete', 'Account Deleted ..!!');
-     return redirect()->back();
-  }
+   //delete Student profile
+   public function deleteStudent($id)
+   {
+      User::destroy($id);
+      // save log data
+      $authEmployee = Auth::user()->employees;
+      $logData = ActivityLog::create([
+         'userId' => Auth::user()->id,
+         'activity' => $authEmployee->firstName . ' ' . $authEmployee->lastName . ' has deleted Student id : ' . $id,
+      ]);
+      session()->flash('delete', 'Account Deleted ..!!');
+      return redirect()->back();
+   }
 
 
 

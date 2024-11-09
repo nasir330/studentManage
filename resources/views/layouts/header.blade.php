@@ -41,12 +41,10 @@
     </div>
     <div id="main_content">
         <!-- App Left-side-menu start -->
-        @if (Auth::user()->userType == 3)
-            @include('includes.menu.app_menu_employee')
-        @elseif (Auth::user()->userType == 4)
-            @include('includes.menu.app_menu_client')
-        @else
-            @include('includes.menu.app_menu')
+        @if (Auth::user()->userType == 1)
+            @include('includes.menu.app_menu')           
+        @else 
+            @include('includes.menu.app_menu_employee')                
         @endif
         <!-- App Left-side-menu end -->
 
