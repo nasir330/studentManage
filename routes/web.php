@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Clients\ClientProjectController;
+use App\Http\Controllers\Employees\EmployeeProjectController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\ProfileController;
@@ -70,15 +71,27 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    //bugs route
-    Route::get('/work-break',function(){
-        return "bugs";
-    })->name('employee.work.break');
+   
 
     // Reports
     Route::get('/report', [ActivityLogController::class, 'index'])->name('admin.report');
     Route::get('/report-employee-log/{id}', [ActivityLogController::class, 'viewEmployeeLog'])->name('admin.report.viewEmployeeLog');
     Route::get('/report-student-log/{id}', [ActivityLogController::class, 'viewStudentLog'])->name('admin.report.viewStudentLog');
+
+    //Departments
+    route::get('/departments',[DepartmentsController::class, 'index'])->name('departments');
+    route::post('/add-departments',[DepartmentsController::class, 'store'])->name('add.departments');
+    route::get('/edit-departments/{id}',[DepartmentsController::class, 'edit'])->name('edit.departments');
+    route::post('/update-departments',[DepartmentsController::class, 'update'])->name('update.departments');
+    route::get('/fetch-admin-department',[DepartmentsController::class, 'fetchAdminDepartment'])->name('admin.fetch.departents');
+    
+   
+    //Designation
+    route::get('/designations',[DesignationsController::class, 'index'])->name('designations');
+    route::post('/add-designations',[DesignationsController::class, 'store'])->name('add.designations');
+    route::get('/edit-designations/{id}',[DesignationsController::class, 'edit'])->name('edit.designations');
+    route::post('/update-designations',[DesignationsController::class, 'update'])->name('update.designations');
+    route::get('/fetch-designation/{id}',[DesignationsController::class, 'fetchDesignation'])->name('admin.fetch.designation');
 });
 
 //Employee routes
@@ -97,6 +110,7 @@ Route::middleware('auth')->prefix('employee')->group(function () {
     Route::post('/student-photo-update', [UserController::class, 'photoUpdateStudent'])->name('employee.photoUpdate.student');
     Route::post('/student-info-update', [UserController::class, 'infoUpdateStudent'])->name('employee.infoUpdate.student');
     Route::get('delete-student/{id}', [UserController::class, 'deleteStudent'])->name('employee.delete.student');
+    Route::post('/work-break',[EmployeeProjectController::class,'workBreak'])->name('employee.work.break');
 });
 
 //client routes
